@@ -1,0 +1,28 @@
+= Retro-board ideation starter
+
+IMPORTANT: This is a WIP project to get familiar with some technologies. +
+Do not attempt to use this project as any kind of reference. +
+It is written badly.
+
+== Business need
+
+Have some columns with cards that you can move around.
+
+== Technology stack
+
+- TypeScript
+- WebSockets (websocket.io)
+
+== Development
+
+link:https://devenv.sh[Use devenv.sh] and do not bother with setting up your environment.
+
+[shell,terminal]
+----
+$ devenv shell
+
+(devenv) $ cd frontend && npm run start &
+(devenv) $ cd backend && npm run start:dev
+----
+
+Backend with WebSocket server will be running on port 8080 and frontend on port 3000.
