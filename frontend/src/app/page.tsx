@@ -4,6 +4,7 @@ import Login from "@/components/login/login";
 import Chat from "@/components/chat/chat";
 import {useEffect, useState} from "react";
 import {socket} from "@/app/socket";
+import Room from "@/components/room/room";
 
 export default function Home() {
     // WebSockets
@@ -49,6 +50,9 @@ export default function Home() {
         <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center font-[family-name:var(--font-geist-sans)]">
             <main className="flex row-start-2 items-center sm:items-start">
                 <Login username={username} setUsername={setUsername} />
+                {username && (
+                    <Room/>
+                )}
                 {!username && (
                     <div className="flex flex-col gap-4">
                         <h1 className="text-2xl font-bold text-center">Status</h1>
@@ -59,7 +63,6 @@ export default function Home() {
                 )}
                 {username && (
                     <>
-                        <Chat username={username} />
                         <div className="flex flex-col gap-4">
                             <h1 className="text-2xl font-bold">Websocket status</h1>
                             <div>

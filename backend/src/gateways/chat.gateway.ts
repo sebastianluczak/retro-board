@@ -1,12 +1,9 @@
 import {
   ConnectedSocket,
   MessageBody,
-  OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
-  WsResponse,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
@@ -16,7 +13,6 @@ type ChatData = {
   message: string;
 };
 
-// logic of rooms
 type ChatRoom = {
   name: string;
   connections: Socket[];
@@ -53,6 +49,7 @@ export class ChatGateway implements OnGatewayDisconnect {
 
   private broadcast(event: any, message: any) {
     this.logger.log(`Broadcasting message to default room`);
+    // todo: determine the room from the client. Name rooms as UUIDs.
     const room = this.chatRooms.find((room) => room.name === 'default');
     if (!room) {
       throw new Error('Room not found');
