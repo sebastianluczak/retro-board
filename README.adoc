@@ -4,6 +4,9 @@ IMPORTANT: This is a WIP project to get familiar with some technologies. +
 Do not attempt to use this project as any kind of reference. +
 It is written badly.
 
+.A walkthrough of the product
+video::cast_retro_board.mp4[]
+
 == Business need
 
 Have some columns with cards that you can move around.
