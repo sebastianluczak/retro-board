@@ -4,7 +4,7 @@ IMPORTANT: This is a WIP project to get familiar with some technologies. +
 Do not attempt to use this project as any kind of reference. +
 It is written badly.
 
-image::image-2025-02-24-14-44-32-762.png[]
+image::image-2025-02-24-20-44-05-046.png[]
 
 == Business need
 
