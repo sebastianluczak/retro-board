@@ -42,20 +42,6 @@ export class BoardsGateway implements OnGatewayDisconnect {
       board.participants = board.participants.filter(
         (participant) => participant !== client,
       );
-      //this.sendUpdatedParticipantsToClients(board.name);
-    }
-  }
-
-  private sendUpdatedParticipantsToClients(boardName: string) {
-    this.logger.log(`Sending updated participants to clients`);
-    const board = this.boards.find((board) => board.name === boardName);
-
-    if (!board) {
-      throw new Error('Board not found');
-    }
-
-    for (const participant of board.participants) {
-      participant.emit('participantsUpdated', board.participants);
     }
   }
 
@@ -95,7 +81,8 @@ export class BoardsGateway implements OnGatewayDisconnect {
               {
                 id: '1',
                 content: 'Example card',
-                image: 'https://example.com/image.jpg',
+                image:
+                  'https://upload.wikimedia.org/wikipedia/commons/8/8f/Example_image.svg',
               },
             ],
           },

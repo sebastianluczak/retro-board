@@ -4,6 +4,7 @@ import { CardComponent } from "@/components/board/card";
 export type Card = {
   id: number;
   content: string;
+  image?: string; // URL to image
 };
 
 export const ItemType = {

@@ -29,11 +29,13 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(({ card, inde
     updateCardContent(columnIndex, index, e.target.value);
   };
 
+  // Card sometimes has an image.
   return (
     <div
       ref={elementRef}
       className={`p-4 bg-gray-700 text-white rounded shadow ${isDragging ? "opacity-50" : "opacity-100"}`}
     >
+      <img src={card.image} alt={card.content} className="w-full h-48 object-cover" />
             <textarea
               className="w-full bg-gray-700 text-white border-none resize-none"
               value={card.content}
