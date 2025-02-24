@@ -29,6 +29,12 @@ export default function Room(props: { boardName: string }) {
         const [draggedCard] = newColumns[sourceColumnIndex].cards.splice(dragIndex, 1);
         newColumns[targetColumnIndex].cards.unshift(draggedCard);
         setColumns(newColumns);
+        socket.emit('moveCard', {
+            boardName: boardName,
+            dragIndex: dragIndex,
+            sourceColumnIndex: sourceColumnIndex,
+            targetColumnIndex: targetColumnIndex,
+        })
     };
 
     const updateCardContent = (columnIndex: number, cardIndex: number, content: string) => {

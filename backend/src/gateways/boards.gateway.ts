@@ -138,4 +138,30 @@ export class BoardsGateway implements OnGatewayDisconnect {
     board.columns[data.columnIndex].cards.push(data.card);
     this.sendUpdatedBoardsToClients(data.boardName);
   }
+
+  @SubscribeMessage('moveCard')
+  handleMoveCard(
+    @MessageBody()
+    data: {
+      boardName: string;
+      dragIndex: number;
+      sourceColumnIndex: number;
+      targetColumnIndex: number;
+    },
+  ) {
+    this.logger.log(
+      `Moving card from column ${data.sourceColumnIndex} to ${data.targetColumnIndex} in ${data.boardName}`,
+    );
+    const board = this.boards.find((board) => board.name === data.boardName);
+    if (!board) {
+      throw new Error('Board not found');
+    }
+
+    const [draggedCard] = board.columns[data.sourceColumnIndex].cards.splice(
+      data.dragIndex,
+      1,
+    );
+    board.columns[data.targetColumnIndex].cards.unshift(draggedCard);
+    this.sendUpdatedBoardsToClients(data.boardName);
+  }
 }
