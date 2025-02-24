@@ -2,4 +2,4 @@
 
 import { io } from "socket.io-client";
 
-export const socket = io("http://localhost:8080");
+export const socket = io(process.env.BACKEND_SERVER || "https://retro-board-backend-ldaq.onrender.com");
