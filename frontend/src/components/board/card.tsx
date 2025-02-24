@@ -9,11 +9,12 @@ type CardProps = {
   boardName: string;
   index: number;
   columnIndex: number;
+  disabled: boolean;
   updateCardContent: (columnIndex: number, cardIndex: number, content: string, imageUrl?: string) => void;
 };
 
 // eslint-disable-next-line react/display-name
-export const CardComponent = forwardRef<HTMLDivElement, CardProps>(({ card, boardName, index, columnIndex, updateCardContent }, ref) => {
+export const CardComponent = forwardRef<HTMLDivElement, CardProps>(({ card, boardName, disabled, index, columnIndex, updateCardContent }, ref) => {
   const [{ isDragging }, drag] = useDrag({
     type: ItemType.CARD,
     item: { index, columnIndex },
@@ -61,11 +62,11 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(({ card, boar
     }
   }, [card.content, card.image]);
 
-  // Card sometimes has an image.
   return (
     <div
       ref={elementRef}
       className={`p-4 bg-gray-700 text-white rounded shadow ${isDragging ? "opacity-50" : "opacity-100"}`}
+      style={{ cursor: disabled ? "not-allowed" : "grab" }}
     >
       {card.image?.length && (
         <Image src={card.image} alt={card.content} width={300} height={200} />
@@ -76,11 +77,22 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(({ card, boar
         value={card.content}
         onChange={handleContentChange}
       />
-      <input
-        type="file"
-        className="w-full bg-gray-700 text-white border-none"
-        onChange={handleImageChange}
-      />
+      <div className="mb-4 text-sm text-gray-400">Owned by {card.ownedBy}</div>
+      {!disabled && (
+        <div className="relative w-full">
+          <input
+            type="file"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            onChange={handleImageChange}
+          />
+          <button
+            type="button"
+            className="w-full bg-blue-950 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+          >
+            Upload Image
+          </button>
+        </div>
+      )}
     </div>
   );
 });

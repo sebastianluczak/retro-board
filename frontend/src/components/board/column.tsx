@@ -5,6 +5,7 @@ import {Ref} from "react";
 export type Card = {
   id: number;
   content: string;
+  ownedBy: string; // User ID
   image?: string; // URL to image
 };
 
@@ -15,6 +16,7 @@ export const ItemType = {
 type ColumnProps = {
   name: string,
   boardName: string;
+  currentUser: string;
   cards: Card[],
   columnIndex: number;
   moveCard: (dragIndex: number, sourceColumnIndex: number, targetColumnIndex: number) => void;
@@ -23,7 +25,7 @@ type ColumnProps = {
 };
 
 
-export default function Column({ name, boardName, cards, columnIndex, moveCard, addCard, updateCardContent }: ColumnProps){
+export default function Column({ name, boardName, currentUser, cards, columnIndex, moveCard, addCard, updateCardContent }: ColumnProps){
   const [, drop] = useDrop({
     accept: ItemType.CARD,
     drop: (draggedItem: { index: number; columnIndex: number }) => {
@@ -33,6 +35,8 @@ export default function Column({ name, boardName, cards, columnIndex, moveCard, 
     },
   }) as [unknown, ConnectDropTarget];
 
+  // some cards should be disabled for some users
+  // if user is not the owner of the card, disable the card
   return (
     <div className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-bold text-white">{name}</h2>
@@ -51,6 +55,7 @@ export default function Column({ name, boardName, cards, columnIndex, moveCard, 
           columnIndex={columnIndex}
           updateCardContent={updateCardContent}
           boardName={boardName}
+          disabled={card.ownedBy !== currentUser}
         />
       ))}
     </div>

@@ -25,6 +25,7 @@ type ColumnData = {
 
 type CardData = {
   id: string; // Card ID
+  ownedBy: string; // someone, we'll determine who later
   content: string; // Card content, as a string
   image: string; // Card image, as a string
 };
@@ -92,6 +93,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
             cards: [
               {
                 id: '1',
+                ownedBy: data.ownedBy,
                 content: 'Example card',
                 image:
                   'https://upload.wikimedia.org/wikipedia/commons/8/8f/Example_image.svg',

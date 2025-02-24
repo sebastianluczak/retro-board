@@ -62,6 +62,7 @@ export default function Home() {
                 {loggedIn && (
                     <Room
                       boardName={boardName}
+                      username={username}
                     />
                 )}
             </main>

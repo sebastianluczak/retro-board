@@ -4,14 +4,20 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { socket} from "@/app/socket";
 import Column, {Card} from "@/components/board/column";
 
-export default function Room(props: { boardName: string }) {
-    const { boardName } = props;
+type RoomProps = {
+    boardName: string;
+    username: string;
+};
+
+export default function Room(props: RoomProps) {
+    const { boardName, username } = props;
     const [columns, setColumns] = useState<{ name: string, cards: Card[]}[]>([]);
     const [participants, setParticipants] = useState<string[]>([]);
 
     const addCard = (columnIndex: number) => {
         const newCard: Card = {
             id: Date.now(),
+            ownedBy: username,
             content: "New Card",
         };
         const newColumns = [...columns];
@@ -77,6 +83,7 @@ export default function Room(props: { boardName: string }) {
                         moveCard={moveCard}
                         addCard={addCard}
                         updateCardContent={updateCardContent}
+                        currentUser={username}
                     />
                 ))}
             </div>
