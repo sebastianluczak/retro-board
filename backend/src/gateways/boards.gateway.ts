@@ -42,7 +42,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
       board.participants = board.participants.filter(
         (participant) => participant !== client,
       );
-      this.sendUpdatedParticipantsToClients(board.name);
+      //this.sendUpdatedParticipantsToClients(board.name);
     }
   }
 
