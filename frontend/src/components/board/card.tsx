@@ -30,7 +30,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(({ card, boar
   useImperativeHandle(ref, () => elementRef.current);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    updateCardContent(columnIndex, index, e.target.value);
+    updateCardContent(columnIndex, index, e.target.value, card.image);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
