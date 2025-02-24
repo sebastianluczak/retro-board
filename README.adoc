@@ -20,6 +20,11 @@ Supported User Actions:
 - [x] changing contents of a card to be broadcast to other users immediately
 - [x] image support in cards, especially for memes and gifs
 
+== Deployment
+
+* FE: https://retro-board-ui.onrender.com
+* BE: https://retro-board-backend-ldaq.onrender.com
+
 === Roadmap
 
 NOTE: Some features may or may not be added based on my leniency.
