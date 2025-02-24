@@ -22,13 +22,17 @@ Supported User Actions:
 
 == Deployment
 
-* FE: https://retro-board-ui.onrender.com
-* BE: https://retro-board-backend-ldaq.onrender.com
+Project is configured to be deployed on Render.com automatically after each push.
 
-=== Roadmap
+* FE: https://retro-board-ui.onrender.com - the main app connected to BE
+* BE: https://retro-board-backend-ldaq.onrender.com - nothing to see here, just WebSocket server
+
+== Roadmap
 
 NOTE: Some features may or may not be added based on my leniency.
 
+- [ ] disconnecting users from boards, it's clunky at best
+- [ ] cards with "submit" button to broadcast changes, now it's immediate and can be annoying/causes problems
 - [ ] deleting cards
 - [ ] ownership of boards, with additional features for owners
 - [ ] ownership of cards, to not be able to modify other's cards

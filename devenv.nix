@@ -4,6 +4,7 @@
   env.GREET = "retro-board";
   packages = [ pkgs.git ];
   languages.typescript.enable = true;
+  env.BACKEND_SERVER = "http://localhost:8080";
 
   # Processes for `devenv up` command to build & run application
   processes = {
