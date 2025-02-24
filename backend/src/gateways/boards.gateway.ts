@@ -8,11 +8,6 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 
-type ChatData = {
-  username: string;
-  message: string;
-};
-
 type BoardData = {
   ownedBy: string; // someone, we'll determine who later
   name: string; // Board name
@@ -31,46 +26,36 @@ type CardData = {
   image: string; // Card image, as a string
 };
 
-type ChatRoom = {
-  name: string;
-  connections: Socket[];
-  messages: ChatData[];
-};
-
 @WebSocketGateway({ cors: true })
 export class BoardsGateway implements OnGatewayDisconnect {
-  private chatRooms: ChatRoom[];
-  private boards: BoardData[];
-  private logger = new Logger(BoardsGateway.name);
+  private readonly boards: BoardData[];
+  private readonly logger = new Logger(BoardsGateway.name);
 
   constructor() {
     this.boards = [];
-    this.chatRooms = [
-      {
-        name: 'default',
-        connections: [],
-        messages: [],
-      },
-    ];
   }
 
   handleDisconnect(client: Socket) {
     // remove the user from all rooms
     this.logger.log(`User disconnects from all boards`);
-    for (const room of this.chatRooms) {
-      room.connections = room.connections.filter((c) => c !== client);
+    for (const board of this.boards) {
+      board.participants = board.participants.filter(
+        (participant) => participant !== client,
+      );
+      this.sendUpdatedParticipantsToClients(board.name);
     }
   }
 
-  private broadcast(event: string, message: any) {
-    this.logger.log(`Broadcasting message to default room`);
-    // todo: determine the room from the client. Name rooms as UUIDs.
-    const room = this.chatRooms.find((room) => room.name === 'default');
-    if (!room) {
-      throw new Error('Room not found');
+  private sendUpdatedParticipantsToClients(boardName: string) {
+    this.logger.log(`Sending updated participants to clients`);
+    const board = this.boards.find((board) => board.name === boardName);
+
+    if (!board) {
+      throw new Error('Board not found');
     }
-    for (const c of room.connections) {
-      c.emit(event, message);
+
+    for (const participant of board.participants) {
+      participant.emit('participantsUpdated', board.participants);
     }
   }
 
@@ -84,10 +69,13 @@ export class BoardsGateway implements OnGatewayDisconnect {
 
     for (const participant of board.participants) {
       participant.emit('columnsUpdated', board.columns);
+      participant.emit(
+        'participantsUpdated',
+        board.participants.map((p) => p.id),
+      );
     }
   }
 
-  // This is new login
   @SubscribeMessage('createBoard')
   handleCreateBoard(
     @MessageBody() data: Omit<BoardData, 'columns' | 'participants'>,
@@ -128,14 +116,11 @@ export class BoardsGateway implements OnGatewayDisconnect {
       `In chosen board [${data.name}] there are ${chosenBoard.participants.length} participants`,
     );
 
-    // should we emit another event here, like `userJoinedBoard` for all participants?
-    // We should, like this:
     this.sendUpdatedBoardsToClients(data.name);
   }
 
   @SubscribeMessage('updateBoard')
   handleUpdateBoard(@MessageBody() data: BoardData) {
-    // absolutely everyone can update the whole board, todo in the future
     this.logger.log(`Updating board ${data.name}`);
     const board = this.boards.find((board) => board.name === data.name);
     if (!board) {
@@ -143,30 +128,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     }
     board.columns = data.columns;
 
-    // and what now? We should update all participants now
     this.sendUpdatedBoardsToClients(data.name);
-  }
-
-  // todo: make it deprecated
-  @SubscribeMessage('login')
-  handleLogin(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: { room: string; username: string },
-  ) {
-    this.logger.log(`User ${data.username} logs in to room ${data.room}`);
-    this.chatRooms
-      .find((room) => room.name === data.room)
-      ?.connections.push(client);
-  }
-
-  @SubscribeMessage('events')
-  handleEvent(@MessageBody() data: ChatData) {
-    const board = this.boards.find((board) => board.name === 'default');
-    if (!board) {
-      throw new Error('Board not found');
-    }
-
-    this.broadcast('events', data);
   }
 
   @SubscribeMessage('addCard')

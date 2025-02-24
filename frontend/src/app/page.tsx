@@ -7,8 +7,8 @@ import Room from "@/components/room/room";
 
 export default function Home() {
     // WebSockets
-    const [isConnected, setIsConnected] = useState(false);
-    const [transport, setTransport] = useState("N/A");
+    const [, setIsConnected] = useState(false);
+    const [, setTransport] = useState("N/A");
 
     const [loggedIn, setLoggedIn] = useState(false);
 
@@ -39,14 +39,10 @@ export default function Home() {
 
         socket.on("connect", onConnect);
         socket.on("disconnect", onDisconnect);
-        socket.on("events", (message) => {
-            console.log("Received message from server", message);
-        });
 
         return () => {
             socket.off("connect", onConnect);
             socket.off("disconnect", onDisconnect);
-            socket.off("events");
         };
     }, []);
 
