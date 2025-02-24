@@ -176,6 +176,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
       columnIndex: number;
       cardIndex: number;
       content: string;
+      image: string;
     },
   ) {
     this.logger.log(
@@ -188,6 +189,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
 
     board.columns[data.columnIndex].cards[data.cardIndex].content =
       data.content;
+    board.columns[data.columnIndex].cards[data.cardIndex].image = data.image;
     this.sendUpdatedBoardsToClients(data.boardName);
   }
 }

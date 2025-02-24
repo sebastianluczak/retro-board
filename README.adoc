@@ -18,6 +18,7 @@ Supported User Actions:
 - [x] adding new cards
 - [x] moving cards between columns (drop card on "New card" button)
 - [x] changing contents of a card to be broadcast to other users immediately
+- [x] image support in cards, especially for memes and gifs
 
 === Roadmap
 
@@ -26,8 +27,11 @@ NOTE: Some features may or may not be added based on my leniency.
 - [ ] deleting cards
 - [ ] ownership of boards, with additional features for owners
 - [ ] ownership of cards, to not be able to modify other's cards
-- [ ] image support in cards, especially for memes and gifs
+- [ ] add minimal amount of tests
+- [ ] customizing columns in boards
+- [ ] persisting data of boards in a database instead of memory
 - [ ] better architecture of FE and BE
+- [ ] proper styling
 
 == Technology stack
 
@@ -42,13 +46,20 @@ link:https://devenv.sh[Use devenv.sh] and do not bother with setting up your env
 
 [shell,terminal]
 ----
-$ devenv shell
-
-## Start frontend
-(devenv) $ cd frontend && npm run dev &
-
-## Start backend
-(devenv) $ cd backend && npm run start:dev
+$ devenv up
 ----
 
-Backend with WebSocket server will be running on port 8080 and frontend on port 3000.
+Backend with WebSocket server will be running on port 8080 and frontend on port 3000. Visit link:https://localhost:3000[localhost:3000] to see the frontend.
+
+=== Development Shell
+
+You can access development shell to run commands like `npm run lint` or `npm run test`.
+
+[shell,terminal]
+----
+$ devenv shell
+----
+
+=== Tests
+
+Nothing here yet.

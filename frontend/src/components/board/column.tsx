@@ -1,5 +1,6 @@
-import { useDrop } from "react-dnd";
+import {ConnectDropTarget, useDrop} from "react-dnd";
 import { CardComponent } from "@/components/board/card";
+import {Ref} from "react";
 
 export type Card = {
   id: number;
@@ -13,6 +14,7 @@ export const ItemType = {
 
 type ColumnProps = {
   name: string,
+  boardName: string;
   cards: Card[],
   columnIndex: number;
   moveCard: (dragIndex: number, sourceColumnIndex: number, targetColumnIndex: number) => void;
@@ -21,7 +23,7 @@ type ColumnProps = {
 };
 
 
-export default function Column({ name, cards, columnIndex, moveCard, addCard, updateCardContent }: ColumnProps){
+export default function Column({ name, boardName, cards, columnIndex, moveCard, addCard, updateCardContent }: ColumnProps){
   const [, drop] = useDrop({
     accept: ItemType.CARD,
     drop: (draggedItem: { index: number; columnIndex: number }) => {
@@ -29,14 +31,13 @@ export default function Column({ name, cards, columnIndex, moveCard, addCard, up
         moveCard(draggedItem.index, draggedItem.columnIndex, columnIndex);
       }
     },
-  });
+  }) as [unknown, ConnectDropTarget];
 
   return (
     <div className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-bold text-white">{name}</h2>
       <button
-        // @ts-expect-error - TS doesn't know about the ref prop
-        ref={drop}
+        ref={drop as unknown as Ref<HTMLButtonElement>}
         className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
         onClick={() => addCard(columnIndex)}
       >
@@ -49,6 +50,7 @@ export default function Column({ name, cards, columnIndex, moveCard, addCard, up
           index={index}
           columnIndex={columnIndex}
           updateCardContent={updateCardContent}
+          boardName={boardName}
         />
       ))}
     </div>

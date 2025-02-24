@@ -37,15 +37,17 @@ export default function Room(props: { boardName: string }) {
         })
     };
 
-    const updateCardContent = (columnIndex: number, cardIndex: number, content: string) => {
+    const updateCardContent = (columnIndex: number, cardIndex: number, content: string, imageUrl?: string) => {
         const newColumns = [...columns];
         newColumns[columnIndex].cards[cardIndex].content = content;
+        newColumns[columnIndex].cards[cardIndex].image = imageUrl ?? newColumns[columnIndex].cards[cardIndex].image;
         setColumns(newColumns);
         socket.emit('updateCardContent', {
             boardName: boardName,
             columnIndex: columnIndex,
             cardIndex: cardIndex,
             content: content,
+            image: imageUrl,
         });
     };
 
@@ -69,6 +71,7 @@ export default function Room(props: { boardName: string }) {
                     <Column
                         key={columnIndex}
                         cards={column.cards}
+                        boardName={boardName}
                         name={column.name}
                         columnIndex={columnIndex}
                         moveCard={moveCard}
