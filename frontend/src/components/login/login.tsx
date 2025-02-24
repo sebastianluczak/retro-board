@@ -1,56 +1,86 @@
 "use client";
 
-import {useEffect} from "react";
-import {debounce} from "lodash";
-import {socket} from "@/app/socket";
+import { useState, useEffect, useCallback } from "react";
+import { socket } from "@/app/socket";
 
 type LoginProps = {
-    username: string;
-    setUsername: (username: string) => void;
+  username: string;
+  setUsername: (username: string) => void;
+  boardName: string;
+  setBoardName: (boardName: string) => void;
+  loggedIn: boolean;
+  setLoggedIn: (loggedIn: boolean) => void;
 };
 
-const DEFAULT_ROOM = "default";
+export default function Login({ username, boardName, setUsername, setBoardName, setLoggedIn }: LoginProps) {
+  const [loading, setLoading] = useState(false);
 
-export default function Login(props: LoginProps) {
-    const { username, setUsername } = props;
+  const loginToServer = useCallback(() => {
+    if (username.length < 4 || boardName.length < 4) {
+      console.warn("Username and board name must be at least 4 characters.");
+      return;
+    }
 
-    useEffect(() => {
-        const loginToServer = () => {
-            socket.emit("login", {
-                room: DEFAULT_ROOM,
-                username
-            });
-        };
+    setLoading(true);
 
-        if (username) {
-            console.log("Username is", username);
-            console.log("Logging in...");
-            loginToServer();
-        }
-    }, [username]);
+    socket.emit("createBoard", { ownedBy: username, name: boardName });
 
-    return (
-        <div className="flex items-start h-screen">
-            <div className="w-96 p-4 rounded-lg shadow-lg">
-                {!username && (
-                    <>
-                        <h1 className="text-2xl font-bold text-center">Login</h1>
-                        <form className="mt-4">
-                            <div className="mb-4">
-                                <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
-                                <input
-                                    type="text"
-                                    id="username"
-                                    name="username"
-                                    className="mt-1 block w-full px-3 py-2 border bg-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm
-                                focus:ring-2 focus:ring-primary"
-                                    onChange={debounce((e) => setUsername(e.target.value), 1000)}
-                                />
-                            </div>
-                        </form>
-                    </>
-                )}
-            </div>
-        </div>
-    );
+    socket.once("boardExists", (data) => {
+      console.error("BOARD EXISTS", data);
+      const newBoardName = `${data.name} (1)`;
+      socket.emit("createBoard", { ownedBy: username, name: newBoardName });
+      setLoading(false);
+    });
+
+    setLoading(false);
+    setLoggedIn(true);
+  }, [username, boardName, setLoggedIn]);
+
+  useEffect(() => {
+    return () => {
+      socket.off("boardExists");
+    };
+  }, []);
+
+  return (
+    <div className="flex items-start h-screen">
+      <div className="w-96 p-4 rounded-lg shadow-lg">
+        <h1 className="text-2xl font-bold text-center">Provide details</h1>
+        <form className="mt-4">
+          <div className="mb-4">
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={username}
+              className="mt-1 block w-full px-3 py-2 border bg-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <label htmlFor="boardName" className="block text-sm font-medium text-gray-700">
+              Board Name
+            </label>
+            <input
+              type="text"
+              id="boardName"
+              name="boardName"
+              value={boardName}
+              className="mt-1 block w-full px-3 py-2 border bg-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              onChange={(e) => setBoardName(e.target.value)}
+            />
+          </div>
+          <button
+            type="button"
+            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:opacity-50"
+            onClick={loginToServer}
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }

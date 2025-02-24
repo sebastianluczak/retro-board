@@ -24,7 +24,7 @@ link:https://devenv.sh[Use devenv.sh] and do not bother with setting up your env
 ----
 $ devenv shell
 
-(devenv) $ cd frontend && npm run start &
+(devenv) $ cd frontend && npm run dev &
 (devenv) $ cd backend && npm run start:dev
 ----
 

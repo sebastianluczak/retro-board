@@ -1,97 +1,12 @@
-import { useState, useRef, useImperativeHandle, forwardRef } from "react";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { useState, useEffect } from "react";
+import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { socket} from "@/app/socket";
+import Column, {Card} from "@/components/board/column";
 
-type Card = {
-    id: number;
-    content: string;
-};
-
-type ColumnProps = {
-    column: Card[];
-    columnIndex: number;
-    moveCard: (dragIndex: number, sourceColumnIndex: number, targetColumnIndex: number) => void;
-    addCard: (columnIndex: number) => void;
-    updateCardContent: (columnIndex: number, cardIndex: number, content: string) => void;
-};
-
-type CardProps = {
-    card: Card;
-    index: number;
-    columnIndex: number;
-    updateCardContent: (columnIndex: number, cardIndex: number, content: string) => void;
-};
-
-const ItemType = {
-    CARD: "card",
-};
-
-const CardComponent = forwardRef<HTMLDivElement, CardProps>(({ card, index, columnIndex, updateCardContent }, ref) => {
-    const [{ isDragging }, drag] = useDrag({
-        type: ItemType.CARD,
-        item: { index, columnIndex },
-        collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
-        }),
-    });
-
-    const elementRef = useRef<HTMLDivElement>(null);
-    drag(elementRef);
-
-    useImperativeHandle(ref, () => elementRef.current);
-
-    const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        updateCardContent(columnIndex, index, e.target.value);
-    };
-
-    return (
-        <div
-            ref={elementRef}
-            className={`p-4 bg-gray-700 text-white rounded shadow ${isDragging ? "opacity-50" : "opacity-100"}`}
-        >
-            <textarea
-                className="w-full bg-gray-700 text-white border-none resize-none"
-                value={card.content}
-                onChange={handleContentChange}
-            />
-        </div>
-    );
-});
-
-const Column = ({ column, columnIndex, moveCard, addCard, updateCardContent }: ColumnProps) => {
-    const [, drop] = useDrop({
-        accept: ItemType.CARD,
-        drop: (draggedItem: { index: number; columnIndex: number }) => {
-            if (draggedItem.columnIndex !== columnIndex) {
-                moveCard(draggedItem.index, draggedItem.columnIndex, columnIndex);
-            }
-        },
-    });
-
-    return (
-        <div className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md">
-            <button
-                ref={drop}
-                className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-                onClick={() => addCard(columnIndex)}
-            >
-                + Add Card
-            </button>
-            {column.map((card, index) => (
-                <CardComponent
-                    key={card.id}
-                    card={card}
-                    index={index}
-                    columnIndex={columnIndex}
-                    updateCardContent={updateCardContent}
-                />
-            ))}
-        </div>
-    );
-};
-
-export default function Room() {
-    const [columns, setColumns] = useState<Card[][]>([[], [], [], []]);
+export default function Room(props: { boardName: string }) {
+    const { boardName } = props;
+    const [columns, setColumns] = useState<{ name: string, cards: Card[]}[]>([]);
 
     const addCard = (columnIndex: number) => {
         const newCard: Card = {
@@ -99,35 +14,44 @@ export default function Room() {
             content: "New Card",
         };
         const newColumns = [...columns];
-        newColumns[columnIndex].unshift(newCard);
+        newColumns[columnIndex].cards.unshift(newCard);
         setColumns(newColumns);
+        socket.emit('addCard', {
+            boardName: boardName,
+            columnIndex: columnIndex,
+            card: newCard,
+        });
     };
 
     const moveCard = (dragIndex: number, sourceColumnIndex: number, targetColumnIndex: number) => {
-        const sourceColumn = [...columns[sourceColumnIndex]];
-        const [movedCard] = sourceColumn.splice(dragIndex, 1);
-        const targetColumn = [...columns[targetColumnIndex]];
-        targetColumn.unshift(movedCard);
-
         const newColumns = [...columns];
-        newColumns[sourceColumnIndex] = sourceColumn;
-        newColumns[targetColumnIndex] = targetColumn;
+        const [draggedCard] = newColumns[sourceColumnIndex].cards.splice(dragIndex, 1);
+        newColumns[targetColumnIndex].cards.unshift(draggedCard);
         setColumns(newColumns);
     };
 
     const updateCardContent = (columnIndex: number, cardIndex: number, content: string) => {
         const newColumns = [...columns];
-        newColumns[columnIndex][cardIndex].content = content;
+        newColumns[columnIndex].cards[cardIndex].content = content;
         setColumns(newColumns);
     };
 
+    useEffect(() => {
+        socket.on('columnsUpdated', (columns) => {
+            console.log('Columns updated with count', columns.length);
+            setColumns(columns);
+        });
+    }, []);
+
     return (
         <DndProvider backend={HTML5Backend}>
+            <h1 className="text-3xl font-bold text-center">{boardName}</h1>
             <div className="grid grid-cols-4 gap-4 p-4">
                 {columns.map((column, columnIndex) => (
                     <Column
                         key={columnIndex}
-                        column={column}
+                        cards={column.cards}
+                        name={column.name}
                         columnIndex={columnIndex}
                         moveCard={moveCard}
                         addCard={addCard}

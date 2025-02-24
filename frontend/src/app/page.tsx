@@ -1,7 +1,6 @@
 "use client";
 
 import Login from "@/components/login/login";
-import Chat from "@/components/chat/chat";
 import {useEffect, useState} from "react";
 import {socket} from "@/app/socket";
 import Room from "@/components/room/room";
@@ -11,8 +10,12 @@ export default function Home() {
     const [isConnected, setIsConnected] = useState(false);
     const [transport, setTransport] = useState("N/A");
 
+    const [loggedIn, setLoggedIn] = useState(false);
+
     // Username
     const [username, setUsername] = useState("");
+    // Board name
+    const [boardName, setBoardName] = useState("");
 
     useEffect(() => {
         if (socket.connected) {
@@ -31,6 +34,7 @@ export default function Home() {
         function onDisconnect() {
             setIsConnected(false);
             setTransport("N/A");
+            console.log("Disconnected from server");
         }
 
         socket.on("connect", onConnect);
@@ -47,31 +51,22 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center font-[family-name:var(--font-geist-sans)]">
-            <main className="flex row-start-2 items-center sm:items-start">
-                <Login username={username} setUsername={setUsername} />
-                {username && (
-                    <Room/>
+        <div className="flex items-center justify-center h-screen">
+            <main>
+                {!loggedIn && (
+                  <Login
+                      username={username}
+                      setUsername={setUsername}
+                      boardName={boardName}
+                      setBoardName={setBoardName}
+                      loggedIn={loggedIn}
+                      setLoggedIn={setLoggedIn}
+                    />
                 )}
-                {!username && (
-                    <div className="flex flex-col gap-4">
-                        <h1 className="text-2xl font-bold text-center">Status</h1>
-                        <p>
-                            Provide a username to login.
-                        </p>
-                    </div>
-                )}
-                {username && (
-                    <>
-                        <div className="flex flex-col gap-4">
-                            <h1 className="text-2xl font-bold">Websocket status</h1>
-                            <div>
-                                <p>Status: {isConnected ? "connected" : "disconnected"}</p>
-                                <p>Transport: {transport}</p>
-                                <p>Username: {username}</p>
-                            </div>
-                        </div>
-                    </>
+                {loggedIn && (
+                    <Room
+                      boardName={boardName}
+                    />
                 )}
             </main>
         </div>
