@@ -48,7 +48,10 @@ export class BoardsGateway implements OnGatewayDisconnect {
     }
   }
 
-  private sendUpdatedBoardsToClients(boardName: string) {
+  private sendUpdatedBoardsToClients(
+    boardName: string,
+    options?: { exclude?: Socket },
+  ) {
     this.logger.log(`Sending updated boards to clients`);
     const board = this.boards.find((board) => board.name === boardName);
 
@@ -57,6 +60,12 @@ export class BoardsGateway implements OnGatewayDisconnect {
     }
 
     for (const participant of board.participants) {
+      if (options?.exclude && participant.socket === options.exclude) {
+        this.logger.log(
+          `Excluding ${participant.username} as they are the source`,
+        );
+        continue;
+      }
       participant.socket.emit('columnsUpdated', board.columns);
       participant.socket.emit(
         'participantsUpdated',
@@ -110,7 +119,10 @@ export class BoardsGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage('updateBoard')
-  handleUpdateBoard(@MessageBody() data: BoardData) {
+  handleUpdateBoard(
+    @MessageBody() data: BoardData,
+    @ConnectedSocket() client: Socket,
+  ) {
     this.logger.log(`Updating board ${data.name}`);
     const board = this.boards.find((board) => board.name === data.name);
     if (!board) {
@@ -118,7 +130,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     }
     board.columns = data.columns;
 
-    this.sendUpdatedBoardsToClients(data.name);
+    this.sendUpdatedBoardsToClients(data.name, { exclude: client });
   }
 
   @SubscribeMessage('addCard')
