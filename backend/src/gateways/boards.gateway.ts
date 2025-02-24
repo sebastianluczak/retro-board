@@ -190,6 +190,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
       content: string;
       image: string;
     },
+    @ConnectedSocket() client: Socket,
   ) {
     this.logger.log(
       `Updating card content in column ${data.columnIndex} to ${data.content} in ${data.boardName}`,
@@ -202,6 +203,6 @@ export class BoardsGateway implements OnGatewayDisconnect {
     board.columns[data.columnIndex].cards[data.cardIndex].content =
       data.content;
     board.columns[data.columnIndex].cards[data.cardIndex].image = data.image;
-    this.sendUpdatedBoardsToClients(data.boardName);
+    this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
   }
 }
