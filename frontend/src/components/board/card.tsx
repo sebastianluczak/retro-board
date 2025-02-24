@@ -1,6 +1,7 @@
 import {forwardRef, useImperativeHandle, useRef} from "react";
 import {useDrag} from "react-dnd";
 import {Card, ItemType} from "@/components/board/column";
+import Image from "next/image";
 
 type CardProps = {
   card: Card;
@@ -35,12 +36,14 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(({ card, inde
       ref={elementRef}
       className={`p-4 bg-gray-700 text-white rounded shadow ${isDragging ? "opacity-50" : "opacity-100"}`}
     >
-      <img src={card.image} alt={card.content} className="w-full h-48 object-cover" />
-            <textarea
-              className="w-full bg-gray-700 text-white border-none resize-none"
-              value={card.content}
-              onChange={handleContentChange}
-            />
+      {card.image?.length && (
+        <Image src={card.image} alt={card.content} width={300} height={200} />
+      )}
+      <textarea
+        className="w-full bg-gray-700 text-white border-none resize-none"
+        value={card.content}
+        onChange={handleContentChange}
+      />
     </div>
   );
 });

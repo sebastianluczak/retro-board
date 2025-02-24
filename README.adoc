@@ -4,16 +4,36 @@ IMPORTANT: This is a WIP project to get familiar with some technologies. +
 Do not attempt to use this project as any kind of reference. +
 It is written badly.
 
-.A walkthrough of the product
-video::cast_retro_board.mp4[]
+image::image-2025-02-24-14-44-32-762.png[]
 
 == Business need
 
 Have some columns with cards that you can move around.
 
+Changes are broadcast to all connected clients via WebSockets.
+
+Supported User Actions:
+
+- [x] creation of a board with username
+- [x] adding new cards
+- [x] moving cards between columns (drop card on "New card" button)
+- [x] changing contents of a card to be broadcast to other users immediately
+
+=== Roadmap
+
+NOTE: Some features may or may not be added based on my leniency.
+
+- [ ] deleting cards
+- [ ] ownership of boards, with additional features for owners
+- [ ] ownership of cards, to not be able to modify other's cards
+- [ ] image support in cards, especially for memes and gifs
+- [ ] better architecture of FE and BE
+
 == Technology stack
 
 - TypeScript
+- Backend: NestJS
+- Frontend: React + NextJS
 - WebSockets (websocket.io)
 
 == Development
@@ -24,7 +44,10 @@ link:https://devenv.sh[Use devenv.sh] and do not bother with setting up your env
 ----
 $ devenv shell
 
+## Start frontend
 (devenv) $ cd frontend && npm run dev &
+
+## Start backend
 (devenv) $ cd backend && npm run start:dev
 ----
 

@@ -22,7 +22,6 @@ type ColumnProps = {
 
 
 export default function Column({ name, cards, columnIndex, moveCard, addCard, updateCardContent }: ColumnProps){
-  console.log(cards);
   const [, drop] = useDrop({
     accept: ItemType.CARD,
     drop: (draggedItem: { index: number; columnIndex: number }) => {

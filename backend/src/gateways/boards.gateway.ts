@@ -11,7 +11,10 @@ import { Socket } from 'socket.io';
 type BoardData = {
   ownedBy: string; // someone, we'll determine who later
   name: string; // Board name
-  participants: Socket[]; // Participants in the board
+  participants: {
+    socket: Socket;
+    username: string;
+  }[]; // Participants in the board
   columns: ColumnData[]; // Columns for a board
 };
 
@@ -40,7 +43,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     this.logger.log(`User disconnects from all boards`);
     for (const board of this.boards) {
       board.participants = board.participants.filter(
-        (participant) => participant !== client,
+        (participant) => participant.socket !== client,
       );
     }
   }
@@ -54,10 +57,10 @@ export class BoardsGateway implements OnGatewayDisconnect {
     }
 
     for (const participant of board.participants) {
-      participant.emit('columnsUpdated', board.columns);
-      participant.emit(
+      participant.socket.emit('columnsUpdated', board.columns);
+      participant.socket.emit(
         'participantsUpdated',
-        board.participants.map((p) => p.id),
+        board.participants.map((p) => p.username),
       );
     }
   }
@@ -73,7 +76,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
       chosenBoard = {
         ownedBy: data.ownedBy,
         name: data.name,
-        participants: [client],
+        participants: [{ socket: client, username: data.ownedBy }],
         columns: [
           {
             name: 'Example column',
@@ -96,7 +99,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     } else {
       // if the board exists, we should just join user to the board
       this.logger.log(`Board ${data.name} already exists`);
-      chosenBoard.participants.push(client);
+      chosenBoard.participants.push({ socket: client, username: data.ownedBy });
     }
 
     this.logger.log(
@@ -162,6 +165,29 @@ export class BoardsGateway implements OnGatewayDisconnect {
       1,
     );
     board.columns[data.targetColumnIndex].cards.unshift(draggedCard);
+    this.sendUpdatedBoardsToClients(data.boardName);
+  }
+
+  @SubscribeMessage('updateCardContent')
+  handleUpdateCardContent(
+    @MessageBody()
+    data: {
+      boardName: string;
+      columnIndex: number;
+      cardIndex: number;
+      content: string;
+    },
+  ) {
+    this.logger.log(
+      `Updating card content in column ${data.columnIndex} to ${data.content} in ${data.boardName}`,
+    );
+    const board = this.boards.find((board) => board.name === data.boardName);
+    if (!board) {
+      throw new Error('Board not found');
+    }
+
+    board.columns[data.columnIndex].cards[data.cardIndex].content =
+      data.content;
     this.sendUpdatedBoardsToClients(data.boardName);
   }
 }

@@ -41,6 +41,12 @@ export default function Room(props: { boardName: string }) {
         const newColumns = [...columns];
         newColumns[columnIndex].cards[cardIndex].content = content;
         setColumns(newColumns);
+        socket.emit('updateCardContent', {
+            boardName: boardName,
+            columnIndex: columnIndex,
+            cardIndex: cardIndex,
+            content: content,
+        });
     };
 
     useEffect(() => {
@@ -57,7 +63,7 @@ export default function Room(props: { boardName: string }) {
     return (
         <DndProvider backend={HTML5Backend}>
             <h1 className="text-3xl font-bold text-center">{boardName}</h1>
-            <span>Participants: {participants.join(', ')}</span>
+            <span>Participants <b>({participants.length})</b>: {participants.join(', ')}</span>
             <div className="grid grid-cols-4 gap-4 p-4">
                 {columns.map((column, columnIndex) => (
                     <Column
