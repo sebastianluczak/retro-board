@@ -1,6 +1,6 @@
-import {ConnectDropTarget, useDrop} from "react-dnd";
+import { ConnectDropTarget, useDrop } from "react-dnd";
 import { CardComponent } from "@/components/board/card";
-import {Ref} from "react";
+import { Ref } from "react";
 
 export type Card = {
   id: number;
@@ -19,13 +19,14 @@ type ColumnProps = {
   currentUser: string;
   cards: Card[],
   columnIndex: number;
+  changeColumnName: (columnIndex: number, name: string) => void;
   moveCard: (dragIndex: number, sourceColumnIndex: number, targetColumnIndex: number) => void;
   addCard: (columnIndex: number) => void;
   updateCardContent: (columnIndex: number, cardIndex: number, content: string) => void;
 };
 
 
-export default function Column({ name, boardName, currentUser, cards, columnIndex, moveCard, addCard, updateCardContent }: ColumnProps){
+export default function Column({ name, boardName, currentUser, cards, columnIndex, changeColumnName, moveCard, addCard, updateCardContent }: ColumnProps){
   const [, drop] = useDrop({
     accept: ItemType.CARD,
     drop: (draggedItem: { index: number; columnIndex: number }) => {
@@ -35,11 +36,14 @@ export default function Column({ name, boardName, currentUser, cards, columnInde
     },
   }) as [unknown, ConnectDropTarget];
 
-  // some cards should be disabled for some users
-  // if user is not the owner of the card, disable the card
   return (
     <div className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md">
-      <h2 className="text-lg font-bold text-white">{name}</h2>
+      <input
+        type={"text"}
+        value={name}
+        className="p-2 bg-gray-800 text-white rounded hover:bg-gray-700 font-bold transition"
+        onChange={(r) => changeColumnName(columnIndex, r.target.value)}
+      />
       <button
         ref={drop as unknown as Ref<HTMLButtonElement>}
         className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"

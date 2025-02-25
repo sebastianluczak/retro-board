@@ -1,8 +1,8 @@
 "use client";
 
 import Login from "@/components/login/login";
-import {useEffect, useState} from "react";
-import {socket} from "@/app/socket";
+import { useEffect, useState } from "react";
+import { socket } from "@/app/socket";
 import Room from "@/components/room/room";
 import TopBar from "@/components/topbar/top-bar";
 

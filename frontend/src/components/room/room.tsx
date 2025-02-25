@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { socket} from "@/app/socket";
-import Column, {Card} from "@/components/board/column";
+import { socket } from "@/app/socket";
+import Column, { Card } from "@/components/board/column";
 import Participants from "@/components/participants/participants";
 
 type RoomProps = {
@@ -30,6 +30,18 @@ export default function Room(props: RoomProps) {
             card: newCard,
         });
     };
+
+    const changeColumnName = (columnIndex: number, name: string) => {
+        const newColumns = [...columns];
+        newColumns[columnIndex].name = name;
+        setColumns(newColumns);
+        console.info("Emmiting column name change event...");
+        socket.emit('columnNameChanged', {
+           boardName: boardName,
+           columnIndex: columnIndex,
+           name: name,
+        });
+    }
 
     const moveCard = (dragIndex: number, sourceColumnIndex: number, targetColumnIndex: number) => {
         const newColumns = [...columns];
@@ -87,6 +99,7 @@ export default function Room(props: RoomProps) {
                           boardName={boardName}
                           name={column.name}
                           columnIndex={columnIndex}
+                          changeColumnName={changeColumnName}
                           moveCard={moveCard}
                           addCard={addCard}
                           updateCardContent={updateCardContent}

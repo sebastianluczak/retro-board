@@ -32,7 +32,7 @@ type CardData = {
 
 @WebSocketGateway({ cors: true })
 export class BoardsGateway implements OnGatewayDisconnect {
-  private readonly boards: BoardData[];
+  private readonly boards: BoardData[] = [];
   private readonly logger = new Logger(BoardsGateway.name);
 
   constructor() {
@@ -180,6 +180,28 @@ export class BoardsGateway implements OnGatewayDisconnect {
     );
     board.columns[data.targetColumnIndex].cards.unshift(draggedCard);
     this.sendUpdatedBoardsToClients(data.boardName);
+  }
+
+  @SubscribeMessage('columnNameChanged')
+  handleColumnNameChanged(
+    @MessageBody()
+    data: {
+      boardName: string;
+      columnIndex: number;
+      name: string;
+    },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log(
+      `Change of column at index ${data.columnIndex} on board named ${data.boardName} to ${data.name}`,
+    );
+    const board = this.boards.find((board) => board.name === data.boardName);
+    if (!board) {
+      throw new Error('Board not found');
+    }
+
+    board.columns[data.columnIndex].name = data.name;
+    this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
   }
 
   @SubscribeMessage('updateCardContent')
