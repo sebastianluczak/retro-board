@@ -4,7 +4,7 @@ IMPORTANT: This is a WIP project to get familiar with some technologies. +
 Do not attempt to use this project as any kind of reference. +
 It is written badly.
 
-image::image-2025-02-24-20-44-05-046.png[]
+image::app.png[]
 
 == Business need
 
@@ -19,6 +19,7 @@ Supported User Actions:
 - [x] moving cards between columns (drop card on "New card" button)
 - [x] changing contents of a card to be broadcast to other users immediately
 - [x] image support in cards, especially for memes and gifs
+- [x] ownership of cards, to not be able to modify other's cards
 
 == Deployment
 
@@ -32,10 +33,8 @@ Project is configured to be deployed on Render.com automatically after each push
 NOTE: Some features may or may not be added based on my leniency.
 
 - [ ] disconnecting users from boards, it's clunky at best
-- [ ] cards with "submit" button to broadcast changes, now it's immediate and can be annoying/causes problems
 - [ ] deleting cards
 - [ ] ownership of boards, with additional features for owners
-- [ ] ownership of cards, to not be able to modify other's cards
 - [ ] add minimal amount of tests
 - [ ] customizing columns in boards
 - [ ] persisting data of boards in a database instead of memory
