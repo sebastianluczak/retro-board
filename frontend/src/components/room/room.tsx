@@ -42,6 +42,18 @@ export default function Room(props: RoomProps) {
         });
     };
 
+    const deleteCard = (cardId: number, columnIndex: number) => {
+        console.log(`Deleting card ${cardId} in column ${columnIndex}`);
+        const newColumns = [...columns];
+        newColumns[columnIndex].cards = newColumns[columnIndex].cards.filter((card) => card.id !== cardId);
+        setColumns(newColumns);
+        socket.emit('deleteCard', {
+            boardName: boardName,
+            columnIndex: columnIndex,
+            id: cardId,
+        })
+    }
+
     const changeColumnName = (columnIndex: number, name: string) => {
         const newColumns = [...columns];
         newColumns[columnIndex].name = name;
@@ -68,7 +80,7 @@ export default function Room(props: RoomProps) {
 
     const removeColumn = (columnIndex: number) => {
         const newColumns = [...columns];
-        delete newColumns[columnIndex];
+        newColumns.splice(columnIndex, 1);
         setColumns(newColumns);
         socket.emit('removeColumn', {
             boardName: boardName,
@@ -142,6 +154,7 @@ export default function Room(props: RoomProps) {
                           removeColumn={removeColumn}
                           moveCard={moveCard}
                           addCard={addCard}
+                          deleteCard={deleteCard}
                           updateCardContent={updateCardContent}
                           currentUser={username}
                         />

@@ -37,9 +37,11 @@ NOTE: Some features may or may not be added based on my leniency.
 - [ ] disconnecting users from boards, it's clunky at best
 - [ ] ownership of boards, with additional features for owners
 - [ ] blur/de-blur cards for owners
+- [ ] votes on cards
 - [ ] add minimal amount of tests
 - [ ] persisting data of boards in a database instead of memory
 - [ ] better architecture of FE and BE
+- [ ] server-based timer - synchronized across all clients
 - [ ] proper styling
 
 == Technology stack

@@ -24,11 +24,12 @@ type ColumnProps = {
   removeColumn: (columnIndex: number) => void;
   moveCard: (dragIndex: number, sourceColumnIndex: number, targetColumnIndex: number) => void;
   addCard: (columnIndex: number) => void;
+  deleteCard: (cardId: number, columnIndex: number) => void;
   updateCardContent: (columnIndex: number, cardIndex: number, content: string) => void;
 };
 
 
-export default function Column({ name, boardName, currentUser, cards, columnIndex, changeColumnName, removeColumn, moveCard, addCard, updateCardContent }: ColumnProps){
+export default function Column({ name, boardName, currentUser, cards, columnIndex, changeColumnName, removeColumn, moveCard, addCard, deleteCard, updateCardContent }: ColumnProps){
   const [, drop] = useDrop({
     accept: ItemType.CARD,
     drop: (draggedItem: { index: number; columnIndex: number }) => {
@@ -70,6 +71,7 @@ export default function Column({ name, boardName, currentUser, cards, columnInde
           index={index}
           columnIndex={columnIndex}
           updateCardContent={updateCardContent}
+          deleteCard={deleteCard}
           boardName={boardName}
           disabled={card.ownedBy !== currentUser}
         />

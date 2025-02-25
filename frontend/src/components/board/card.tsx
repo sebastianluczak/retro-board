@@ -11,12 +11,13 @@ type CardProps = {
   index: number;
   columnIndex: number;
   disabled: boolean;
+  deleteCard: (cardId: number, columnIndex: number) => void;
   updateCardContent: (columnIndex: number, cardIndex: number, content: string, imageUrl?: string) => void;
 };
 
 // eslint-disable-next-line react/display-name
 export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
-  ({ card, boardName, disabled, index, columnIndex, updateCardContent }, ref) => {
+  ({ card, boardName, disabled, index, columnIndex, deleteCard, updateCardContent }, ref) => {
     const [{ isDragging }, drag] = useDrag({
       type: ItemType.CARD,
       item: { index, columnIndex },
@@ -73,7 +74,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
         {!disabled && (
           <button
             className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition"
-            onClick={() => console.log(`Delete clicked on ${card.id} for now it's doing nothing...`)}
+            onClick={() => deleteCard(card.id, columnIndex)}
           >
             <X size={20} />
           </button>

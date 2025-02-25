@@ -156,6 +156,34 @@ export class BoardsGateway implements OnGatewayDisconnect {
     this.sendUpdatedBoardsToClients(data.boardName);
   }
 
+  @SubscribeMessage('deleteCard')
+  handleDeleteCard(
+    @MessageBody()
+    data: {
+      boardName: string;
+      columnIndex: number;
+      id: string;
+    },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log(
+      `Deleting card in board ${data.boardName} with id ${data.id} on column ${data.columnIndex}`,
+    );
+    const board = this.boards.find((board) => board.name === data.boardName);
+    if (!board) {
+      throw new Error('Board not found');
+    }
+
+    board.columns[data.columnIndex].cards = board.columns[
+      data.columnIndex
+    ].cards.filter((card) => {
+      if (card.id !== data.id) {
+        return card;
+      }
+    });
+    this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
+  }
+
   @SubscribeMessage('moveCard')
   handleMoveCard(
     @MessageBody()
