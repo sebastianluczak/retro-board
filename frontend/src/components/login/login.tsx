@@ -46,8 +46,7 @@ export default function Login({ username, boardName, setUsername, setBoardName, 
   return (
     <div className="flex items-start h-screen">
       <div className="w-96 p-4 rounded-lg shadow-lg">
-        <h1 className="text-2xl font-bold text-center">μRetro</h1>
-        <h2 className="text-xl font-bold text-center">Create or Join a Board</h2>
+        <h1 className="text-2xl font-bold text-center">Create or Join a Board</h1>
         <form className="mt-4">
           <div className="mb-4">
             <label htmlFor="username" className="block text-sm font-medium text-gray-500">

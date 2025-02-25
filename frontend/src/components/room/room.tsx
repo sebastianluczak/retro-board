@@ -70,26 +70,34 @@ export default function Room(props: RoomProps) {
     }, []);
 
     return (
-        <DndProvider backend={HTML5Backend}>
-            <h1 className="text-3xl font-bold text-center">{boardName}</h1>
-            <Participants
-                users={participants}
-            />
-            <div className="grid grid-cols-4 gap-4 p-4">
-                {columns.map((column, columnIndex) => (
-                    <Column
-                        key={columnIndex}
-                        cards={column.cards}
-                        boardName={boardName}
-                        name={column.name}
-                        columnIndex={columnIndex}
-                        moveCard={moveCard}
-                        addCard={addCard}
-                        updateCardContent={updateCardContent}
-                        currentUser={username}
-                    />
-                ))}
-            </div>
-        </DndProvider>
+      <DndProvider backend={HTML5Backend}>
+
+          <div className="flex h-full">
+              <div className="w-80 shrink-0">
+                  <Participants users={participants} />
+              </div>
+
+              <div className="flex-grow min-w-0 overflow-x-auto p-4">
+                  <h1 className="text-3xl font-bold text-left m-4">{boardName}</h1>
+                  <div className="grid grid-cols-4 gap-4">
+                      {columns.map((column, columnIndex) => (
+                        <Column
+                          key={columnIndex}
+                          cards={column.cards}
+                          boardName={boardName}
+                          name={column.name}
+                          columnIndex={columnIndex}
+                          moveCard={moveCard}
+                          addCard={addCard}
+                          updateCardContent={updateCardContent}
+                          currentUser={username}
+                        />
+                      ))}
+                  </div>
+              </div>
+          </div>
+      </DndProvider>
     );
+
+
 }
