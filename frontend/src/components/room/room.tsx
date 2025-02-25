@@ -3,6 +3,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { socket} from "@/app/socket";
 import Column, {Card} from "@/components/board/column";
+import Participants from "@/components/participants/participants";
 
 type RoomProps = {
     boardName: string;
@@ -71,7 +72,9 @@ export default function Room(props: RoomProps) {
     return (
         <DndProvider backend={HTML5Backend}>
             <h1 className="text-3xl font-bold text-center">{boardName}</h1>
-            <span>Participants <b>({participants.length})</b>: {participants.join(', ')}</span>
+            <Participants
+                users={participants}
+            />
             <div className="grid grid-cols-4 gap-4 p-4">
                 {columns.map((column, columnIndex) => (
                     <Column

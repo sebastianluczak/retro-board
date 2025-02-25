@@ -1,9 +1,10 @@
 "use client";
 
 import Login from "@/components/login/login";
-import {useEffect, useState} from "react";
+import {use, useEffect, useState} from "react";
 import {socket} from "@/app/socket";
 import Room from "@/components/room/room";
+import TopBar from "@/components/topbar/top-bar";
 
 export default function Home() {
     // WebSockets
@@ -47,7 +48,12 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="flex items-center justify-center h-screen">
+      <>
+        <TopBar
+            username={username}
+            loggedIn={loggedIn}
+        />
+        <div className="flex items-center justify-center mt-20">
             <main>
                 {!loggedIn && (
                   <Login
@@ -67,5 +73,6 @@ export default function Home() {
                 )}
             </main>
         </div>
+      </>
     );
 }

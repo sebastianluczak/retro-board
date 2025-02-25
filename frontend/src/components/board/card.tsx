@@ -76,6 +76,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(({ card, boar
         className="w-full bg-gray-700 text-white border-none resize-none overflow-hidden"
         value={card.content}
         onChange={handleContentChange}
+        disabled={disabled}
       />
       <div className="mb-4 text-sm text-gray-400">Owned by {card.ownedBy}</div>
       {!disabled && (
