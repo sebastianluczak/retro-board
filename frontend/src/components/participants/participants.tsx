@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import toast, { Themes } from "react-simple-toasts";
+import 'react-simple-toasts/dist/theme/failure.css';
 
 export type Participant = {
   name: string;
@@ -52,6 +54,17 @@ export default function Participants({ users }: ParticipantsProps) {
             )}
           </div>
         ))}
+        <div className={"flex-grow text-right items-center"}>
+          <input
+            type={"button"}
+            value={"Logout"}
+            className={"bg-red-700 shadow shadow-red-600 rounded p-2 text-center font-bold"}
+            onClick={() => toast("Logout is not implemented, yet.", {
+              theme: Themes.FAILURE,
+              clickClosable: true,
+            })}
+          />
+        </div>
       </div>
     </div>
   );

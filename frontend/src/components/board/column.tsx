@@ -40,7 +40,10 @@ export default function Column({ name, boardName, currentUser, cards, columnInde
   }) as [unknown, ConnectDropTarget];
 
   return (
-    <div className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md">
+    <div
+      className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md"
+      ref={drop as unknown as Ref<HTMLDivElement>}
+    >
       <div className={"flex justify-start items-center"}>
         <button
           className="text-gray-400 hover:text-red-500 transition"
@@ -57,7 +60,6 @@ export default function Column({ name, boardName, currentUser, cards, columnInde
       </div>
 
       <button
-        ref={drop as unknown as Ref<HTMLButtonElement>}
         className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
         onClick={() => addCard(columnIndex)}
       >
