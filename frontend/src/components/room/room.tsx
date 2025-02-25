@@ -14,6 +14,17 @@ export default function Room(props: RoomProps) {
     const { boardName, username } = props;
     const [columns, setColumns] = useState<{ name: string, cards: Card[]}[]>([]);
     const [participants, setParticipants] = useState<string[]>([]);
+    const [gridTemplateColumns, setGridTemplateColumns] = useState<string>("repeat(auto-fit, minmax(300px, 1fr))");
+    const [gridGap, setGridGap] = useState<string>("16px");
+
+    useEffect(() => {
+        const updateGridStyles = () => {
+            setGridTemplateColumns(`repeat(${columns.length}, minmax(300px, 1fr))`);
+            setGridGap(`${columns.length * 4}px`);
+        };
+
+        updateGridStyles();
+    }, [columns]);
 
     const addCard = (columnIndex: number) => {
         const newCard: Card = {
@@ -35,11 +46,33 @@ export default function Room(props: RoomProps) {
         const newColumns = [...columns];
         newColumns[columnIndex].name = name;
         setColumns(newColumns);
-        console.info("Emmiting column name change event...");
         socket.emit('columnNameChanged', {
            boardName: boardName,
            columnIndex: columnIndex,
            name: name,
+        });
+    }
+
+    const createNewColumn = (columnName: string) => {
+        const newColumns = [...columns];
+        newColumns.push({
+            name: columnName,
+            cards: [],
+        })
+        setColumns(newColumns);
+        socket.emit('createColumn', {
+            boardName: boardName,
+            columnName: columnName,
+        })
+    }
+
+    const removeColumn = (columnIndex: number) => {
+        const newColumns = [...columns];
+        delete newColumns[columnIndex];
+        setColumns(newColumns);
+        socket.emit('removeColumn', {
+            boardName: boardName,
+            columnIndex: columnIndex,
         });
     }
 
@@ -85,21 +118,28 @@ export default function Room(props: RoomProps) {
       <DndProvider backend={HTML5Backend}>
 
           <div className="flex h-full">
-              <div className="w-80 shrink-0">
+              <div className="shrink-0">
                   <Participants users={participants} />
               </div>
 
-              <div className="flex-grow min-w-0 overflow-x-auto p-4">
+              <div className="mt-16 flex-grow min-w-0 overflow-x-auto p-4">
+                  <input
+                    type={"button"}
+                    value={"+ Add Column"}
+                    className={"bg-blue-500 font-bold p-3 m-1 rounded shadow shadow-blue-950"}
+                    onClick={() => createNewColumn("New Column")}
+                  />
                   <h1 className="text-3xl font-bold text-left m-4">{boardName}</h1>
-                  <div className="grid grid-cols-4 gap-4">
+                  <div style={{ display: 'grid', gridTemplateColumns, gap: gridGap }} className="justify-start">
                       {columns.map((column, columnIndex) => (
                         <Column
                           key={columnIndex}
-                          cards={column.cards}
+                          cards={column.cards ?? []}
                           boardName={boardName}
                           name={column.name}
                           columnIndex={columnIndex}
                           changeColumnName={changeColumnName}
+                          removeColumn={removeColumn}
                           moveCard={moveCard}
                           addCard={addCard}
                           updateCardContent={updateCardContent}
@@ -111,6 +151,4 @@ export default function Room(props: RoomProps) {
           </div>
       </DndProvider>
     );
-
-
 }

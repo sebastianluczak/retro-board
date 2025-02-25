@@ -29,23 +29,22 @@ export default function Participants({ users }: ParticipantsProps) {
   }, [users]);
 
   return (
-    <div className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-80 bg-gray-900 text-white p-4 shadow-lg flex flex-col">
-      <h2 className="text-lg font-bold mb-4">Participants ({users.length})</h2>
-      <div className="flex flex-col gap-3 overflow-y-auto w-full">
+    <div className="fixed top-16 left-0 w-full bg-gray-900 text-white p-4 shadow-lg flex flex-row items-center">
+      <div className={"font-bold text-center"}>Online ({users.length})</div>
+      <div className="flex gap-3 overflow-x-auto w-full">
         {users.map((user, index) => (
-          <div key={index} className="flex items-center gap-3">
+          <div key={index} className="flex items-center gap-3" title={user}>
             {hashes[user] ? (
               <Image
                 src={`https://gravatar.com/avatar/${hashes[user]}?d=initials`}
-                alt="Avatar"
+                alt={user}
                 className="w-10 h-10 rounded-full"
-                width={40}
-                height={40}
+                width={80}
+                height={80}
               />
             ) : (
               <div className="w-10 h-10 bg-gray-700 rounded-full animate-pulse" />
             )}
-            <span>{user}</span>
           </div>
         ))}
       </div>

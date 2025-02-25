@@ -229,4 +229,49 @@ export class BoardsGateway implements OnGatewayDisconnect {
     board.columns[data.columnIndex].cards[data.cardIndex].image = data.image;
     this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
   }
+
+  @SubscribeMessage('removeColumn')
+  handleRemoveColumn(
+    @MessageBody()
+    data: {
+      boardName: string;
+      columnIndex: number;
+    },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log(
+      `Removing column in board ${data.boardName} at index ${data.columnIndex}`,
+    );
+    const board = this.boards.find((board) => board.name === data.boardName);
+    if (!board) {
+      throw new Error('Board not found');
+    }
+
+    board.columns.splice(data.columnIndex, 1);
+    this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
+  }
+
+  @SubscribeMessage('createColumn')
+  handleCreateColumn(
+    @MessageBody()
+    data: {
+      boardName: string;
+      columnName: string;
+    },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log(
+      `Adding new column to ${data.boardName} named ${data.columnName}`,
+    );
+    const board = this.boards.find((board) => board.name === data.boardName);
+    if (!board) {
+      throw new Error('Board not found');
+    }
+
+    board.columns.push({
+      name: data.columnName,
+      cards: [],
+    });
+    this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
+  }
 }
