@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { BoardsService } from '../boards/boards.service';
 
 type BoardData = {
   ownedBy: string; // someone, we'll determine who later
@@ -20,6 +21,7 @@ type BoardData = {
 
 type ColumnData = {
   name: string; // Column name
+  voting: boolean; // Determines if column can be voted on
   cards: CardData[]; // Cards in the column
 };
 
@@ -28,6 +30,7 @@ type CardData = {
   ownedBy: string; // someone, we'll determine who later
   content: string; // Card content, as a string
   image: string; // Card image, as a string
+  votes: number; // Number of votes on card
 };
 
 @WebSocketGateway({ cors: true })
@@ -35,12 +38,11 @@ export class BoardsGateway implements OnGatewayDisconnect {
   private readonly boards: BoardData[] = [];
   private readonly logger = new Logger(BoardsGateway.name);
 
-  constructor() {
-    this.boards = [];
-  }
+  constructor(private readonly boardsService: BoardsService) {}
 
   handleDisconnect(client: Socket) {
     // remove the user from all rooms
+    // todo: this.boardsService.removeClientFromAllBoards(client);
     this.logger.log(`User disconnects from all boards`);
     for (const board of this.boards) {
       board.participants = board.participants.filter(
@@ -86,6 +88,12 @@ export class BoardsGateway implements OnGatewayDisconnect {
     let chosenBoard = this.boards.find((board) => board.name === data.name);
     if (!chosenBoard) {
       this.logger.log(`Board ${data.name} does not exist, creating`);
+      /*chosenBoard = this.boardsService.createWith({
+        owner: { name: data.ownedBy, socket: client },
+        name: data.name,
+      });*/
+      // this is the old way, we want to store everything inside BoardsService!
+      // todo: refactor to boards service
       chosenBoard = {
         ownedBy: data.ownedBy,
         name: data.name,
@@ -97,15 +105,18 @@ export class BoardsGateway implements OnGatewayDisconnect {
               {
                 id: '1',
                 ownedBy: data.ownedBy,
-                content: 'Example card',
+                content: 'This is your first card.',
                 image:
-                  'https://upload.wikimedia.org/wikipedia/commons/8/8f/Example_image.svg',
+                  'https://mir-s3-cdn-cf.behance.net/project_modules/hd/5eeea355389655.59822ff824b72.gif',
+                votes: 0,
               },
             ],
+            voting: false,
           },
           {
             name: 'Column 2',
             cards: [],
+            voting: false,
           },
         ],
       };
@@ -302,6 +313,27 @@ export class BoardsGateway implements OnGatewayDisconnect {
     board.columns.push({
       name: data.columnName,
       cards: [],
+      voting: false,
+    });
+    this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
+  }
+
+  @SubscribeMessage('changeVotingStatus')
+  handleChangeVotingStatus(
+    @MessageBody()
+    data: {
+      boardName: string;
+      state: boolean;
+    },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log(`Voting for ${data.boardName} is now ${data.state}`);
+    const board = this.boards.find((board) => board.name === data.boardName);
+    if (!board) {
+      throw new Error('Board not found');
+    }
+    board.columns.forEach((column) => {
+      column.voting = true;
     });
     this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
   }

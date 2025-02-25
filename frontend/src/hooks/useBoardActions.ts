@@ -9,7 +9,7 @@ export function useBoardActions(
   setColumns: React.Dispatch<React.SetStateAction<ColumnRow[]>>
 ) {
   const addCard = (columnIndex: number) => {
-    const newCard: Card = { id: Date.now(), ownedBy: username, content: "New Card" };
+    const newCard: Card = { id: Date.now(), ownedBy: username, content: "New Card", votes: 0 };
     const newColumns = [...columns];
     newColumns[columnIndex].cards.unshift(newCard);
     setColumns(newColumns);
@@ -55,5 +55,9 @@ export function useBoardActions(
     socket.emit("updateCardContent", { boardName, columnIndex, cardIndex, content, image: imageUrl });
   };
 
-  return { addCard, deleteCard, changeColumnName, createNewColumn, removeColumn, moveCard, updateCardContent };
+  const changeVotingStatus = (state: boolean) => {
+    socket.emit('changeVotingStatus', { boardName, state })
+  }
+
+  return { addCard, deleteCard, changeColumnName, createNewColumn, removeColumn, moveCard, updateCardContent, changeVotingStatus };
 }

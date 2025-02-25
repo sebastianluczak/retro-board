@@ -7,6 +7,7 @@ export type Card = {
   id: number;
   content: string;
   ownedBy: string; // User ID
+  votes: number; // Votes on this card
   image?: string; // URL to image
 };
 
@@ -20,6 +21,7 @@ type ColumnProps = {
   currentUser: string;
   cards: Card[],
   columnIndex: number;
+  votingEnabled: boolean;
   changeColumnName: (columnIndex: number, name: string) => void;
   removeColumn: (columnIndex: number) => void;
   moveCard: (dragIndex: number, sourceColumnIndex: number, targetColumnIndex: number) => void;
@@ -29,7 +31,7 @@ type ColumnProps = {
 };
 
 
-export default function Column({ name, boardName, currentUser, cards, columnIndex, changeColumnName, removeColumn, moveCard, addCard, deleteCard, updateCardContent }: ColumnProps){
+export default function Column({ name, boardName, currentUser, cards, columnIndex, votingEnabled, changeColumnName, removeColumn, moveCard, addCard, deleteCard, updateCardContent }: ColumnProps){
   const [, drop] = useDrop({
     accept: ItemType.CARD,
     drop: (draggedItem: { index: number; columnIndex: number }) => {
@@ -75,6 +77,7 @@ export default function Column({ name, boardName, currentUser, cards, columnInde
           updateCardContent={updateCardContent}
           deleteCard={deleteCard}
           boardName={boardName}
+          votingEnabled={votingEnabled}
           disabled={card.ownedBy !== currentUser}
         />
       ))}
