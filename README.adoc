@@ -8,7 +8,7 @@ image::app.png[]
 
 == Business need
 
-Have some columns with cards that you can move around.
+Have some columns with cards that you can move around on kanban-like board for multiple users.
 
 Changes are broadcast to all connected clients via WebSockets.
 
@@ -27,6 +27,8 @@ Supported User Actions:
 
 Project is configured to be deployed on Render.com automatically after each push.
 
+NOTE: Loading those can take up to 50 seconds, as Render.com puts instances on hold when they're not used in free tier.
+
 * FE: https://retro-board-ui.onrender.com - the main app connected to BE
 * BE: https://retro-board-backend-ldaq.onrender.com - nothing to see here, just WebSocket server
 
@@ -39,16 +41,18 @@ NOTE: Some features may or may not be added based on my leniency.
 - [ ] blur/de-blur cards for owners
 - [ ] votes on cards
 - [ ] add minimal amount of tests
+- [ ] better drag-and-drop to support whole column area, not only the column button
+- [ ] ability to save data of a board to a file and restore it, or
 - [ ] persisting data of boards in a database instead of memory
 - [ ] better architecture of FE and BE
 - [ ] server-based timer - synchronized across all clients
-- [ ] proper styling
+- [ ] proper styling with mobile-first approach
 
 == Technology stack
 
 - TypeScript
-- Backend: NestJS
-- Frontend: React + NextJS
+- Backend: link:https://nestjs.com/[NestJS]
+- Frontend: React + link:https://nextjs.org/[Next.js]
 - WebSockets (websocket.io)
 
 == Development
