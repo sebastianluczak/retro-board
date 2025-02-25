@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import { socket } from "@/app/socket";
 import { ColumnRow } from "@/components/room/room";
+import { Participant } from "@/components/participants/participants";
 
 export function useBoardSocket() {
   const [columns, setColumns] = useState<ColumnRow[]>([]);
-  const [participants, setParticipants] = useState<string[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>([]);
 
   useEffect(() => {
     const handleColumnsUpdate = (updatedColumns: ColumnRow[]) => {
       setColumns(updatedColumns);
     };
 
-    const handleParticipantsUpdate = (updatedParticipants: string[]) => {
+    const handleParticipantsUpdate = (updatedParticipants: Participant[]) => {
+      console.log(participants);
       setParticipants(updatedParticipants);
     };
 
@@ -22,7 +24,7 @@ export function useBoardSocket() {
       socket.off("columnsUpdated", handleColumnsUpdate);
       socket.off("participantsUpdated", handleParticipantsUpdate);
     };
-  }, []);
+  }, [participants]);
 
   return { columns, setColumns, participants };
 }

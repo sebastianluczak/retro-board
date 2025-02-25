@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-type ParticipantsProps = {
-  users: string[];
+export type Participant = {
+  name: string;
+  isAdminOfBoard: boolean;
 };
 
-async function hash(value: string) {
-  const utf8 = new TextEncoder().encode(value.toLowerCase().trim());
+type ParticipantsProps = {
+  users: Participant[];
+};
+
+async function hash(value: Participant) {
+  const utf8 = new TextEncoder().encode(value.name.toLowerCase().trim());
   const hashBuffer = await crypto.subtle.digest("SHA-256", utf8);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray
@@ -20,12 +25,12 @@ export default function Participants({ users }: ParticipantsProps) {
   useEffect(() => {
     const computeHashes = async () => {
       const entries = await Promise.all(
-        users.map(async (user) => [user, await hash(user)])
+        users.map(async (user) => [user.name, await hash(user)])
       );
       setHashes(Object.fromEntries(entries));
     };
 
-    computeHashes().then(r => { console.log("Hashes computed.", r) });
+    void computeHashes();
   }, [users]);
 
   return (
@@ -33,11 +38,11 @@ export default function Participants({ users }: ParticipantsProps) {
       <div className={"font-bold text-center"}>Online ({users.length})</div>
       <div className="flex gap-3 overflow-x-auto w-full">
         {users.map((user, index) => (
-          <div key={index} className="flex items-center gap-3" title={user}>
-            {hashes[user] ? (
+          <div key={index} className="flex items-center gap-3" title={user.name}>
+            {hashes[user.name] ? (
               <Image
-                src={`https://gravatar.com/avatar/${hashes[user]}?d=initials`}
-                alt={user}
+                src={`https://gravatar.com/avatar/${hashes[user.name]}?d=initials`}
+                alt={user.name}
                 className="w-10 h-10 rounded-full"
                 width={80}
                 height={80}

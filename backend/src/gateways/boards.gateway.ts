@@ -70,7 +70,10 @@ export class BoardsGateway implements OnGatewayDisconnect {
       participant.socket.emit('columnsUpdated', board.columns);
       participant.socket.emit(
         'participantsUpdated',
-        board.participants.map((p) => p.username),
+        board.participants.map((p) => ({
+          name: p.username,
+          isAdminOfBoard: board.ownedBy === participant.username,
+        })),
       );
     }
   }
