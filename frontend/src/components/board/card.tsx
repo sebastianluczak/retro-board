@@ -97,6 +97,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
             width={300}
             height={200}
             style={{ width: '300px', height: 'auto' }}
+            className={'rounded-lg mb-2'}
           />
         )}
         <textarea
