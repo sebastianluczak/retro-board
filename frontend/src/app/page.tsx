@@ -76,6 +76,17 @@ export default function Home() {
             />
           )}
         </main>
+        <footer>
+          <p className="absolute bottom-0 right-0 text-center text-gray-500 mt-8 shadow-xl shadow-black p-2 font-bold">
+            Made with ❤️ by
+            <a href="https://github.com/sebastianluczak" target={'_blank'} rel="noreferrer">
+              🌈 IT Magician 🦄
+            </a>
+            <i>
+              © 2025
+            </i>
+          </p>
+        </footer>
       </div>
     </>
   );

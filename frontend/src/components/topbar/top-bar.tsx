@@ -10,7 +10,7 @@ export default function TopBar(props: TopBarProps) {
 
   return (
     <div className="absolute top-0 left-0 w-full p-4 flex justify-between bg-gray-800 text-white shadow-md">
-      <span className="font-bold">μRetro</span>
+      <h1 className="font-extrabold">μRetro</h1>
       {username && loggedIn && (
         <span className="flex items-center gap-2 rounded text-gray-200 shadow shadow-gray-900">
           <UserIcon className="w-5 h-5" />
