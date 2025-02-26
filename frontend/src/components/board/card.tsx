@@ -90,7 +90,13 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
         )}
 
         {card.image?.length && (
-          <Image src={card.image} alt={card.content} width={300} height={200} />
+          <Image
+            src={card.image}
+            alt={card.content}
+            width={300}
+            height={200}
+            style={{ width: '300px', height: 'auto' }}
+          />
         )}
         <textarea
           ref={textareaRef}

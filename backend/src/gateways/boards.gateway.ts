@@ -236,13 +236,12 @@ export class BoardsGateway implements OnGatewayDisconnect {
       boardName: string;
       state: boolean;
     },
-    @ConnectedSocket() client: Socket,
   ) {
     this.logger.log(`Voting for ${data.boardName} is now ${data.state}`);
     const board = this.boardsService.findByName(data.boardName);
     board.columns.forEach((column) => {
       column.voting = data.state;
     });
-    this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
+    this.sendUpdatedBoardsToClients(data.boardName);
   }
 }

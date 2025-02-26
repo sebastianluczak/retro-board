@@ -50,7 +50,11 @@ export function useBoardActions(
 
   const updateCardContent = (columnIndex: number, cardIndex: number, content: string, imageUrl?: string) => {
     const newColumns = [...columns];
-    newColumns[columnIndex].cards[cardIndex] = { ...newColumns[columnIndex].cards[cardIndex], content, image: imageUrl ?? newColumns[columnIndex].cards[cardIndex].image };
+    newColumns[columnIndex].cards[cardIndex] = {
+      ...newColumns[columnIndex].cards[cardIndex],
+      content,
+      image: imageUrl ?? newColumns[columnIndex].cards[cardIndex].image,
+    };
     setColumns(newColumns);
     socket.emit('updateCardContent', { boardName, columnIndex, cardIndex, content, image: imageUrl });
   };
@@ -59,5 +63,14 @@ export function useBoardActions(
     socket.emit('changeVotingStatus', { boardName, state });
   };
 
-  return { addCard, deleteCard, changeColumnName, createNewColumn, removeColumn, moveCard, updateCardContent, changeVotingStatus };
+  return {
+    addCard,
+    deleteCard,
+    changeColumnName,
+    createNewColumn,
+    removeColumn,
+    moveCard,
+    updateCardContent,
+    changeVotingStatus,
+  };
 }

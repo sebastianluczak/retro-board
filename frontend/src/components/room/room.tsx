@@ -2,7 +2,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Column, { Card } from '@/components/board/column';
 import Participants from '@/components/participants/participants';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useBoardSocket } from '@/hooks/useBoardSocket';
 import { useGridStyles } from '@/hooks/useGridStyles';
 import { useBoardActions } from '@/hooks/useBoardActions';
@@ -13,26 +13,59 @@ import 'react-simple-toasts/dist/theme/dark.css';
 toastConfig({ theme: 'dark' });
 
 type RoomProps = {
-    boardName: string;
-    username: string;
+  boardName: string;
+  username: string;
 };
 
 export type ColumnRow = {
-    name: string;
-    voting: boolean;
-    cards: Card[];
+  name: string;
+  voting: boolean;
+  cards: Card[];
 };
 
 export default function Room({ boardName, username }: RoomProps) {
   const { columns, setColumns, participants } = useBoardSocket();
   const { gridTemplateColumns, gridGap } = useGridStyles(columns.length);
-  const { addCard, deleteCard, changeColumnName, createNewColumn, removeColumn, moveCard, updateCardContent, changeVotingStatus } = useBoardActions(boardName, username, columns, setColumns);
+  const {
+    addCard,
+    deleteCard,
+    changeColumnName,
+    createNewColumn,
+    removeColumn,
+    moveCard,
+    updateCardContent,
+    changeVotingStatus,
+  } = useBoardActions(boardName, username, columns, setColumns);
   const [ votingEnabled, setVotingEnabled ] = useState<boolean>(false);
 
   const isAdminOfBoard = () => {
     const adminUserOfBoard = participants.filter((user) => user.isAdminOfBoard).pop();
 
     return adminUserOfBoard?.isAdminOfBoard || false;
+  };
+
+  useEffect(() => {
+    if (votingEnabled) {
+      toast('Voting enabled!', { duration: 3000, maxVisibleToasts: 1 });
+    } else {
+      toast('Voting disabled!', { duration: 3000, maxVisibleToasts: 1 });
+    }
+  }, [votingEnabled]);
+
+  const snapshotBoard = () => {
+    const board = {
+      name: boardName,
+      columns: columns,
+    };
+
+    // Now we want to download the board as a JSON file
+    const blob = new Blob([JSON.stringify(board)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${boardName}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -44,7 +77,7 @@ export default function Room({ boardName, username }: RoomProps) {
         <div className="mt-16 flex-grow min-w-0 overflow-x-auto p-4">
           <input
             type="button"
-            value="+ Add Column"
+            value="➕ Add Column"
             className="bg-blue-500 font-bold p-3 m-1 rounded shadow shadow-blue-950"
             onClick={() => createNewColumn('New Column')}
           />
@@ -52,9 +85,9 @@ export default function Room({ boardName, username }: RoomProps) {
             <>
               <input
                 type={'button'}
-                value={'Save board'}
+                value={'💾 Save board'}
                 className="bg-blue-500 font-bold text-white p-3 m-1 rounded shadow shadow-blue-950"
-                onClick={() => toast('Saving board, this is not yet implemented, stay tuned...')}
+                onClick={() => snapshotBoard()}
               />
               <input
                 type="button"
@@ -87,7 +120,7 @@ export default function Room({ boardName, username }: RoomProps) {
                 {...column}
                 columnIndex={columnIndex}
                 boardName={boardName}
-                votingEnabled={votingEnabled}
+                votingEnabled={column.voting}
                 changeColumnName={changeColumnName}
                 removeColumn={removeColumn}
                 moveCard={moveCard}
