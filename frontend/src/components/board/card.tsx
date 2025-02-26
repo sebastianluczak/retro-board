@@ -3,7 +3,8 @@ import { useDrag } from "react-dnd";
 import { Card, ItemType } from "@/components/board/column";
 import Image from "next/image";
 import { socket } from "@/app/socket";
-import { X } from "lucide-react";
+import { X, ThumbsUp } from "lucide-react";
+import toast from "react-simple-toasts";
 
 type CardProps = {
   card: Card;
@@ -11,13 +12,14 @@ type CardProps = {
   index: number;
   columnIndex: number;
   disabled: boolean;
+  votingEnabled: boolean;
   deleteCard: (cardId: number, columnIndex: number) => void;
   updateCardContent: (columnIndex: number, cardIndex: number, content: string, imageUrl?: string) => void;
 };
 
 // eslint-disable-next-line react/display-name
 export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
-  ({ card, boardName, disabled, index, columnIndex, deleteCard, updateCardContent }, ref) => {
+  ({ card, boardName, disabled, votingEnabled, index, columnIndex, deleteCard, updateCardContent }, ref) => {
     const [{ isDragging }, drag] = useDrag({
       type: ItemType.CARD,
       item: { index, columnIndex },
@@ -40,6 +42,12 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) {
+        return;
+      }
+
+      if (file.size > 512 * 1024) {
+        toast("File is too large! Max size is 0.5 MB.");
+        e.target.value = "";
         return;
       }
 
@@ -103,6 +111,16 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
               className="w-full bg-blue-950 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
             >
               Upload Image
+            </button>
+          </div>
+        )}
+        {votingEnabled && (
+          <div className="mt-4 text-sm flex items-center gap-1 justify-end">
+            <button
+              onClick={() => toast(`Upvote of cards is not implemented.`)}
+              className="flex items-center gap-1 text-green-200"
+            >
+              <ThumbsUp/> {card.votes}
             </button>
           </div>
         )}

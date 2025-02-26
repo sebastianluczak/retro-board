@@ -2,6 +2,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Column, { Card } from "@/components/board/column";
 import Participants from "@/components/participants/participants";
+import { useState } from "react";
 import { useBoardSocket } from "@/hooks/useBoardSocket";
 import { useGridStyles } from "@/hooks/useGridStyles";
 import { useBoardActions } from "@/hooks/useBoardActions";
@@ -18,13 +19,15 @@ type RoomProps = {
 
 export type ColumnRow = {
     name: string;
+    voting: boolean;
     cards: Card[];
 };
 
 export default function Room({ boardName, username }: RoomProps) {
     const { columns, setColumns, participants } = useBoardSocket();
     const { gridTemplateColumns, gridGap } = useGridStyles(columns.length);
-    const { addCard, deleteCard, changeColumnName, createNewColumn, removeColumn, moveCard, updateCardContent } = useBoardActions(boardName, username, columns, setColumns);
+    const { addCard, deleteCard, changeColumnName, createNewColumn, removeColumn, moveCard, updateCardContent, changeVotingStatus } = useBoardActions(boardName, username, columns, setColumns);
+    const [ votingEnabled, setVotingEnabled ] = useState<boolean>(false);
 
     const isAdminOfBoard = () => {
         const adminUserOfBoard = participants.filter((user) => user.isAdminOfBoard).pop();
@@ -48,10 +51,21 @@ export default function Room({ boardName, username }: RoomProps) {
                     <>
                         <input
                           type="button"
-                          value="Blur cards"
+                          value={ votingEnabled ? "Disable votes" : "Enable votes" }
+                          className={`font-bold text-white p-3 m-1 rounded shadow ${votingEnabled ? "bg-red-950  shadow-red-700" : "bg-green-950 shadow-green-700"}`}
+                          onClick={() => {
+                            setVotingEnabled(!votingEnabled);
+                            changeVotingStatus(!votingEnabled);
+                          }}
+                        />
+
+                        <input
+                          type="button"
+                          value={"Blur cards"}
                           className="bg-red-950 font-bold text-white p-3 m-1 rounded shadow shadow-red-700"
                           onClick={() => toast("Blurring cards, this is not yet implemented, stay tuned...")}
                         />
+
                         <input
                           type="button"
                           value="Start timer"
@@ -68,6 +82,7 @@ export default function Room({ boardName, username }: RoomProps) {
                           {...column}
                           columnIndex={columnIndex}
                           boardName={boardName}
+                          votingEnabled={votingEnabled}
                           changeColumnName={changeColumnName}
                           removeColumn={removeColumn}
                           moveCard={moveCard}

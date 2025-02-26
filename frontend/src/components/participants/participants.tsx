@@ -36,7 +36,7 @@ export default function Participants({ users }: ParticipantsProps) {
   }, [users]);
 
   return (
-    <div className="fixed top-16 left-0 w-full bg-gray-900 text-white p-4 shadow-lg flex flex-row items-center">
+    <div className="absolute top-16 left-0 w-full bg-gray-900 text-white p-4 shadow-lg flex flex-row items-center">
       <div className={"font-bold text-center"}>Online ({users.length})</div>
       <div className="flex gap-3 overflow-x-auto w-full">
         {users.map((user, index) => (

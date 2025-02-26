@@ -7,46 +7,17 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-
-type BoardData = {
-  ownedBy: string; // someone, we'll determine who later
-  name: string; // Board name
-  participants: {
-    socket: Socket;
-    username: string;
-  }[]; // Participants in the board
-  columns: ColumnData[]; // Columns for a board
-};
-
-type ColumnData = {
-  name: string; // Column name
-  cards: CardData[]; // Cards in the column
-};
-
-type CardData = {
-  id: string; // Card ID
-  ownedBy: string; // someone, we'll determine who later
-  content: string; // Card content, as a string
-  image: string; // Card image, as a string
-};
+import { BoardData, BoardsService, CardData } from '../boards/boards.service';
 
 @WebSocketGateway({ cors: true })
 export class BoardsGateway implements OnGatewayDisconnect {
-  private readonly boards: BoardData[] = [];
   private readonly logger = new Logger(BoardsGateway.name);
 
-  constructor() {
-    this.boards = [];
-  }
+  constructor(private readonly boardsService: BoardsService) {}
 
   handleDisconnect(client: Socket) {
-    // remove the user from all rooms
     this.logger.log(`User disconnects from all boards`);
-    for (const board of this.boards) {
-      board.participants = board.participants.filter(
-        (participant) => participant.socket !== client,
-      );
-    }
+    this.boardsService.removeClientFromBoards(client);
   }
 
   private sendUpdatedBoardsToClients(
@@ -54,11 +25,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     options?: { exclude?: Socket },
   ) {
     this.logger.log(`Sending updated boards to clients`);
-    const board = this.boards.find((board) => board.name === boardName);
-
-    if (!board) {
-      throw new Error('Board not found');
-    }
+    const board = this.boardsService.findByName(boardName);
 
     for (const participant of board.participants) {
       if (options?.exclude && participant.socket === options.exclude) {
@@ -83,37 +50,16 @@ export class BoardsGateway implements OnGatewayDisconnect {
     @MessageBody() data: Omit<BoardData, 'columns' | 'participants'>,
     @ConnectedSocket() client: Socket,
   ) {
-    let chosenBoard = this.boards.find((board) => board.name === data.name);
-    if (!chosenBoard) {
-      this.logger.log(`Board ${data.name} does not exist, creating`);
-      chosenBoard = {
-        ownedBy: data.ownedBy,
-        name: data.name,
-        participants: [{ socket: client, username: data.ownedBy }],
-        columns: [
-          {
-            name: 'Example column',
-            cards: [
-              {
-                id: '1',
-                ownedBy: data.ownedBy,
-                content: 'Example card',
-                image:
-                  'https://upload.wikimedia.org/wikipedia/commons/8/8f/Example_image.svg',
-              },
-            ],
-          },
-          {
-            name: 'Column 2',
-            cards: [],
-          },
-        ],
-      };
-      this.boards.push(chosenBoard);
-    } else {
-      // if the board exists, we should just join user to the board
-      this.logger.log(`Board ${data.name} already exists`);
+    let chosenBoard: BoardData;
+    try {
+      chosenBoard = this.boardsService.findByName(data.name);
       chosenBoard.participants.push({ socket: client, username: data.ownedBy });
+    } catch {
+      this.logger.log(`Board ${data.name} does not exist, creating`);
+      chosenBoard = this.boardsService.createWith({
+        owner: { name: data.ownedBy, socket: client },
+        name: data.name,
+      });
     }
 
     this.logger.log(
@@ -129,10 +75,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
   ) {
     this.logger.log(`Updating board ${data.name}`);
-    const board = this.boards.find((board) => board.name === data.name);
-    if (!board) {
-      throw new Error('Board not found');
-    }
+    const board = this.boardsService.findByName(data.name);
     board.columns = data.columns;
 
     this.sendUpdatedBoardsToClients(data.name, { exclude: client });
@@ -150,10 +93,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     this.logger.log(
       `Adding card to column ${data.columnIndex} to ${data.boardName}`,
     );
-    const board = this.boards.find((board) => board.name === data.boardName);
-    if (!board) {
-      throw new Error('Board not found');
-    }
+    const board = this.boardsService.findByName(data.boardName);
 
     board.columns[data.columnIndex].cards.push(data.card);
     this.sendUpdatedBoardsToClients(data.boardName);
@@ -172,10 +112,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     this.logger.log(
       `Deleting card in board ${data.boardName} with id ${data.id} on column ${data.columnIndex}`,
     );
-    const board = this.boards.find((board) => board.name === data.boardName);
-    if (!board) {
-      throw new Error('Board not found');
-    }
+    const board = this.boardsService.findByName(data.boardName);
 
     board.columns[data.columnIndex].cards = board.columns[
       data.columnIndex
@@ -200,10 +137,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     this.logger.log(
       `Moving card from column ${data.sourceColumnIndex} to ${data.targetColumnIndex} in ${data.boardName}`,
     );
-    const board = this.boards.find((board) => board.name === data.boardName);
-    if (!board) {
-      throw new Error('Board not found');
-    }
+    const board = this.boardsService.findByName(data.boardName);
 
     const [draggedCard] = board.columns[data.sourceColumnIndex].cards.splice(
       data.dragIndex,
@@ -226,10 +160,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     this.logger.log(
       `Change of column at index ${data.columnIndex} on board named ${data.boardName} to ${data.name}`,
     );
-    const board = this.boards.find((board) => board.name === data.boardName);
-    if (!board) {
-      throw new Error('Board not found');
-    }
+    const board = this.boardsService.findByName(data.boardName);
 
     board.columns[data.columnIndex].name = data.name;
     this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
@@ -250,10 +181,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     this.logger.log(
       `Updating card content in column ${data.columnIndex} to ${data.content} in ${data.boardName}`,
     );
-    const board = this.boards.find((board) => board.name === data.boardName);
-    if (!board) {
-      throw new Error('Board not found');
-    }
+    const board = this.boardsService.findByName(data.boardName);
 
     board.columns[data.columnIndex].cards[data.cardIndex].content =
       data.content;
@@ -273,10 +201,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
     this.logger.log(
       `Removing column in board ${data.boardName} at index ${data.columnIndex}`,
     );
-    const board = this.boards.find((board) => board.name === data.boardName);
-    if (!board) {
-      throw new Error('Board not found');
-    }
+    const board = this.boardsService.findByName(data.boardName);
 
     board.columns.splice(data.columnIndex, 1);
     this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
@@ -294,14 +219,29 @@ export class BoardsGateway implements OnGatewayDisconnect {
     this.logger.log(
       `Adding new column to ${data.boardName} named ${data.columnName}`,
     );
-    const board = this.boards.find((board) => board.name === data.boardName);
-    if (!board) {
-      throw new Error('Board not found');
-    }
+    const board = this.boardsService.findByName(data.boardName);
 
     board.columns.push({
       name: data.columnName,
       cards: [],
+      voting: false,
+    });
+    this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
+  }
+
+  @SubscribeMessage('changeVotingStatus')
+  handleChangeVotingStatus(
+    @MessageBody()
+    data: {
+      boardName: string;
+      state: boolean;
+    },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log(`Voting for ${data.boardName} is now ${data.state}`);
+    const board = this.boardsService.findByName(data.boardName);
+    board.columns.forEach((column) => {
+      column.voting = data.state;
     });
     this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
   }
