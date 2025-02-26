@@ -79,6 +79,10 @@ export class BoardsService {
     return board;
   }
 
+  getAll() {
+    return this.boards;
+  }
+
   findByName(boardName: string) {
     this.logger.debug(`Finding a board with name ${boardName}`);
     const board = this.boards.find((board) => board.name === boardName);

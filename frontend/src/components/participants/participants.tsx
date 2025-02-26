@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import toast, { Themes } from 'react-simple-toasts';
+import toast from 'react-simple-toasts';
 import 'react-simple-toasts/dist/theme/failure.css';
 
 export type Participant = {
@@ -36,6 +36,18 @@ export default function Participants({ users }: ParticipantsProps) {
     void computeHashes();
   }, [users]);
 
+  const logoutWithDelay = () => {
+    const promise = new Promise((resolve) => {
+      setTimeout(() => resolve('done'), 2000);
+    });
+
+    toast('Logging out...', { loading: promise });
+
+    promise.then(() => {
+      window.location.reload();
+    });
+  };
+
   return (
     <div className="absolute top-16 left-0 w-full bg-gray-900 text-white p-4 shadow-lg flex flex-row items-center">
       <div className={'font-bold text-center'}>Online ({users.length})</div>
@@ -60,10 +72,7 @@ export default function Participants({ users }: ParticipantsProps) {
             type={'button'}
             value={'Logout'}
             className={'bg-red-700 shadow shadow-red-600 rounded p-2 text-center font-bold'}
-            onClick={() => toast('Logout is not implemented, yet.', {
-              theme: Themes.FAILURE,
-              clickClosable: true,
-            })}
+            onClick={() => logoutWithDelay()}
           />
         </div>
       </div>

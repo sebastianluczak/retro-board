@@ -18,6 +18,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
   handleDisconnect(client: Socket) {
     this.logger.log(`User disconnects from all boards`);
     this.boardsService.removeClientFromBoards(client);
+    this.sendUpdatedBoardsToClients('all');
   }
 
   private sendUpdatedBoardsToClients(
@@ -25,6 +26,12 @@ export class BoardsGateway implements OnGatewayDisconnect {
     options?: { exclude?: Socket },
   ) {
     this.logger.log(`Sending updated boards to clients`);
+    if (boardName === 'all') {
+      for (const board of this.boardsService.getAll()) {
+        this.sendUpdatedBoardsToClients(board.name, options);
+      }
+      return;
+    }
     const board = this.boardsService.findByName(boardName);
 
     for (const participant of board.participants) {
