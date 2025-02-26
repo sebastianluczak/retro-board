@@ -83,7 +83,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
       >
         {!disabled && (
           <button
-            className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition"
+            className="absolute top-1 right-1 text-gray-400 hover:text-red-500 transition z-10"
             onClick={() => deleteCard(card.id, columnIndex)}
           >
             <X size={20} />
@@ -102,7 +102,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
         )}
         <textarea
           ref={textareaRef}
-          className="w-full bg-gray-700 text-white border-none resize-none overflow-hidden"
+          className="flex w-full bg-gray-700 text-white border-none resize-none overflow-hidden justify-center text-justify"
           value={card.content}
           onChange={handleContentChange}
           disabled={disabled}

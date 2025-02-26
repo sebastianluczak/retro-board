@@ -52,7 +52,10 @@ export class BoardsService {
             {
               id: '1',
               ownedBy: data.owner.name,
-              content: 'This is your first card.',
+              content:
+                'This is your first card. You can move it around, ' +
+                'edit it, and vote on it. You may also add more cards and columns. ' +
+                'Deletion is also possible.',
               image:
                 'https://mir-s3-cdn-cf.behance.net/project_modules/hd/5eeea355389655.59822ff824b72.gif',
               votes: 0,

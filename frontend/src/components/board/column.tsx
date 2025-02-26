@@ -78,7 +78,7 @@ export default function Column(
       </div>
 
       <button
-        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+        className="p-2 bg-blue-800 text-white rounded hover:bg-blue-700 transition"
         onClick={() => addCard(columnIndex)}
       >
         + Add Card

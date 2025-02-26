@@ -78,8 +78,8 @@ export default function Room({ boardName, username }: RoomProps) {
         <div className="mt-16 flex-grow min-w-0 overflow-x-auto p-4">
           <input
             type="button"
-            value="➕ Add Column"
-            className="bg-blue-500 font-bold p-3 m-1 rounded shadow shadow-blue-950"
+            value="+ Add Column"
+            className="bg-blue-800 font-bold p-3 m-1 rounded shadow shadow-blue-950"
             onClick={() => createNewColumn('New Column')}
           />
           {isAdminOfBoard() && (
@@ -87,7 +87,7 @@ export default function Room({ boardName, username }: RoomProps) {
               <input
                 type={'button'}
                 value={'💾 Save board'}
-                className="bg-blue-500 font-bold text-white p-3 m-1 rounded shadow shadow-blue-950"
+                className="bg-blue-800 font-bold text-white p-3 m-1 rounded shadow shadow-blue-950"
                 onClick={() => snapshotBoard()}
               />
               <input
