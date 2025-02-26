@@ -45,6 +45,12 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
         return;
       }
 
+      if (file.size > 512 * 1024) {
+        toast("File is too large! Max size is 0.5 MB.");
+        e.target.value = "";
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = () => {
         const base64String = reader.result as string;

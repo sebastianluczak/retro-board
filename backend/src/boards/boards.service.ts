@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 
-type BoardData = {
+export type BoardData = {
   ownedBy: string; // someone, we'll determine who later
   name: string; // Board name
   participants: {
@@ -13,10 +13,11 @@ type BoardData = {
 
 type ColumnData = {
   name: string; // Column name
+  voting: boolean; // Indicates if columns has voting capabilities
   cards: CardData[]; // Cards in the column
 };
 
-type CardData = {
+export type CardData = {
   id: string; // Card ID
   ownedBy: string; // someone, we'll determine who later
   content: string; // Card content, as a string
@@ -57,10 +58,12 @@ export class BoardsService {
               votes: 0,
             },
           ],
+          voting: false,
         },
         {
           name: 'Column 2',
           cards: [],
+          voting: false,
         },
       ],
       participants: [
@@ -77,10 +80,14 @@ export class BoardsService {
   }
 
   findByName(boardName: string) {
+    this.logger.debug(`Finding a board with name ${boardName}`);
     const board = this.boards.find((board) => board.name === boardName);
     if (!board) {
       throw new Error('Board not found');
     }
+    this.logger.debug(
+      `Board found ${board.name} with columns: ${board.columns.length}`,
+    );
 
     return board;
   }

@@ -2,7 +2,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Column, { Card } from "@/components/board/column";
 import Participants from "@/components/participants/participants";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useBoardSocket } from "@/hooks/useBoardSocket";
 import { useGridStyles } from "@/hooks/useGridStyles";
 import { useBoardActions } from "@/hooks/useBoardActions";
@@ -53,7 +53,10 @@ export default function Room({ boardName, username }: RoomProps) {
                           type="button"
                           value={ votingEnabled ? "Disable votes" : "Enable votes" }
                           className={`font-bold text-white p-3 m-1 rounded shadow ${votingEnabled ? "bg-red-950  shadow-red-700" : "bg-green-950 shadow-green-700"}`}
-                          onClick={() => setVotingEnabled(!votingEnabled)}
+                          onClick={() => {
+                            setVotingEnabled(!votingEnabled);
+                            changeVotingStatus(!votingEnabled);
+                          }}
                         />
 
                         <input

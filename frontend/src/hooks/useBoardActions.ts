@@ -31,7 +31,7 @@ export function useBoardActions(
   };
 
   const createNewColumn = (columnName: string) => {
-    setColumns([...columns, { name: columnName, cards: [] }]);
+    setColumns([...columns, { name: columnName, cards: [], voting: false }]);
     socket.emit("createColumn", { boardName, columnName });
   };
 

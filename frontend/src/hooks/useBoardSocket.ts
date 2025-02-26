@@ -10,10 +10,10 @@ export function useBoardSocket() {
   useEffect(() => {
     const handleColumnsUpdate = (updatedColumns: ColumnRow[]) => {
       setColumns(updatedColumns);
+      console.info("Columns updated", updatedColumns);
     };
 
     const handleParticipantsUpdate = (updatedParticipants: Participant[]) => {
-      console.log(participants);
       setParticipants(updatedParticipants);
     };
 

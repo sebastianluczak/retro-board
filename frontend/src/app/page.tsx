@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { socket } from "@/app/socket";
 import Room from "@/components/room/room";
 import TopBar from "@/components/topbar/top-bar";
+import toast from "react-simple-toasts";
 
 export default function Home() {
     // WebSockets
@@ -35,7 +36,10 @@ export default function Home() {
         function onDisconnect() {
             setIsConnected(false);
             setTransport("N/A");
-            console.log("Disconnected from server");
+            toast("Disconnected from server due to unknown error.", { duration: 5000 });
+            setLoggedIn(false);
+            setUsername("");
+            setBoardName("");
         }
 
         socket.on("connect", onConnect);
