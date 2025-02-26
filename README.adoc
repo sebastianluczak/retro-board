@@ -2,7 +2,7 @@
 
 IMPORTANT: This is a WIP project to get familiar with some technologies. +
 Do not attempt to use this project as any kind of reference. +
-It is written badly.
+It is written badly and has multiple architecture flaws.
 
 image::app.png[]
 
@@ -23,6 +23,8 @@ Supported User Actions:
 - [x] ownership of cards, to not be able to modify other's cards
 - [x] customizing columns in boards, i.e. add, delete, change name of column
 - [x] ownership of boards, with additional features for owners
+- [x] disconnecting users from boards
+- [x] ability to save data of a board to a file
 
 == Deployment
 
@@ -37,11 +39,9 @@ NOTE: Loading those can take up to 50 seconds, as Render.com puts instances on h
 
 NOTE: Some features may or may not be added based on my leniency.
 
-- [ ] disconnecting users from boards, it's clunky at best
 - [ ] blur/de-blur cards for owners
 - [ ] votes on cards
 - [ ] add minimal amount of tests
-- [ ] ability to save data of a board to a file and restore it, or
 - [ ] persisting data of boards in a database instead of memory
 - [ ] better architecture of FE and BE
 - [ ] server-based timer - synchronized across all clients
@@ -77,3 +77,37 @@ $ devenv shell
 === Tests
 
 Nothing here yet.
+
+.Developer's Journey
+[%collapsible]
+====
+One night I got struck by terrible insomnia and decided to write a simple app to get familiar with WebSockets. +
+
+In my whole life, I've never written a single line of code that uses WebSockets, but I've architected a few systems that use them. Crazy, right? +
+
+I've decided to use TypeScript for both frontend and backend, as I've been using it for a while now and I like it. +
+
+This work assured me that WebSockets are not that hard to use, but they pose a lot of challenges when it comes to handling multiple clients and payloads. +
+
+Proposed architecture is greatly flawed, as we're sending board updates as a whole payload, instead of sending only the changes. I'd do it differently if I had put more thought into it. +
+
+I've also skipped writing tests, as I wanted to focus on the main functionality. This was a mistake, as I've spent a lot of time debugging and fixing issues that could be caught by tests, both on BE and FE. +
+
+State management in React is not my strong suit, I should've used `useContext` or `useReducer` instead of `useState` for sharing state between components. I'll explore this in the future. +
+
+I've skipped persistence layer implementation, as I wanted to focus on the main functionality. I'll probably use MongoDB for this, as it's easy to use and I'm familiar with it. +
+
+I also did not spend much time on styling, as I wanted to focus on the main functionality. Application is unusable on mobile devices. CSS always was my weak point, but I'll try to improve it in the future. +
+
+Both FE and BE architecture are not well-thought-out, as I've been adding features on the go. Currently, the code is a mess and it's hard to maintain. +
+
+I'll probably rewrite this project from scratch, with better architecture and more tests in the future. +
+
+It was a fun project to work on, I've learned a lot of things that I should've done differently. +
+
+This experience will help me in the future to write better code and think more about the architecture of the systems using WS as primary source of truth.+
+
+NOTE: To self: do not write code when you're sleep-deprived. It's a bad idea.
+
+Another project on the shelf. EOT
+====
