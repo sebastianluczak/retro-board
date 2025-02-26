@@ -1,4 +1,4 @@
-= Retro-board ideation starter
+= μRetro - Retro-board for teams in TypeScript
 
 IMPORTANT: This is a WIP project to get familiar with some technologies. +
 Do not attempt to use this project as any kind of reference. +
@@ -35,6 +35,8 @@ NOTE: Loading those can take up to 50 seconds, as Render.com puts instances on h
 * FE: https://retro-board-ui.onrender.com - the main app connected to BE
 * BE: https://retro-board-backend-ldaq.onrender.com - nothing to see here, just WebSocket server
 
+IMPORTANT: Do not use those instances as real boards for your teams. Data is not persisted and can be lost at any time.
+
 == Roadmap
 
 NOTE: Some features may or may not be added based on my leniency.
@@ -49,10 +51,10 @@ NOTE: Some features may or may not be added based on my leniency.
 
 == Technology stack
 
-- TypeScript
+- Language: link:https://www.typescriptlang.org/[TypeScript]
 - Backend: link:https://nestjs.com/[NestJS]
-- Frontend: React + link:https://nextjs.org/[Next.js]
-- WebSockets (websocket.io)
+- Frontend: link:https://react.dev/[React] + link:https://nextjs.org/[Next.js]
+- WebSockets (link:https://socket.io/[socket.io])
 
 == Development
 
@@ -63,7 +65,9 @@ link:https://devenv.sh[Use devenv.sh] and do not bother with setting up your env
 $ devenv up
 ----
 
-Backend with WebSocket server will be running on port 8080 and frontend on port 3000. Visit link:https://localhost:3000[localhost:3000] to see the frontend.
+Backend with WebSocket server will be running on port 8080 and frontend on port 3000.
+
+Visit link:https://localhost:3000[localhost:3000] to see the frontend.
 
 === Development Shell
 
@@ -77,6 +81,8 @@ $ devenv shell
 === Tests
 
 Nothing here yet.
+
+IMPORTANT: Never write code without tests for your domain logic. You're asking for trouble.
 
 .Developer's Journey
 [%collapsible]

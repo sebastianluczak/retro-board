@@ -22,6 +22,7 @@ type ColumnProps = {
   cards: Card[],
   columnIndex: number;
   votingEnabled: boolean;
+  upvoteCard: (cardId: number) => void;
   changeColumnName: (columnIndex: number, name: string) => void;
   removeColumn: (columnIndex: number) => void;
   moveCard: (dragIndex: number, sourceColumnIndex: number, targetColumnIndex: number) => void;
@@ -44,6 +45,7 @@ export default function Column(
     addCard,
     deleteCard,
     updateCardContent,
+    upvoteCard,
   }: ColumnProps,
 ){
   const [, drop] = useDrop({
@@ -88,6 +90,7 @@ export default function Column(
           card={card}
           index={index}
           columnIndex={columnIndex}
+          upvoteCard={upvoteCard}
           updateCardContent={updateCardContent}
           deleteCard={deleteCard}
           boardName={boardName}

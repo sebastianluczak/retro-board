@@ -60,7 +60,13 @@ export function useBoardActions(
   };
 
   const changeVotingStatus = (state: boolean) => {
+    const newColumns = [...columns];
+    newColumns.forEach((column) => (column.voting = state));
     socket.emit('changeVotingStatus', { boardName, state });
+  };
+
+  const upvoteCard = (cardId: number) => {
+    socket.emit('upvoteCard', { boardName, cardId });
   };
 
   return {
@@ -72,5 +78,6 @@ export function useBoardActions(
     moveCard,
     updateCardContent,
     changeVotingStatus,
+    upvoteCard,
   };
 }

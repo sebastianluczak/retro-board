@@ -13,13 +13,14 @@ type CardProps = {
   columnIndex: number;
   disabled: boolean;
   votingEnabled: boolean;
+  upvoteCard: (cardId: number) => void;
   deleteCard: (cardId: number, columnIndex: number) => void;
   updateCardContent: (columnIndex: number, cardIndex: number, content: string, imageUrl?: string) => void;
 };
 
 // eslint-disable-next-line react/display-name
 export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
-  ({ card, boardName, disabled, votingEnabled, index, columnIndex, deleteCard, updateCardContent }, ref) => {
+  ({ card, boardName, disabled, votingEnabled, index, columnIndex, deleteCard, updateCardContent, upvoteCard }, ref) => {
     const [{ isDragging }, drag] = useDrag({
       type: ItemType.CARD,
       item: { index, columnIndex },
@@ -124,7 +125,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
         {votingEnabled && (
           <div className="mt-4 text-sm flex items-center gap-1 justify-end">
             <button
-              onClick={() => toast('Upvote of cards is not implemented.')}
+              onClick={() => upvoteCard(card.id)}
               className="flex items-center gap-1 text-green-200"
             >
               <ThumbsUp/> {card.votes}

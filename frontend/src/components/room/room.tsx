@@ -35,6 +35,7 @@ export default function Room({ boardName, username }: RoomProps) {
     moveCard,
     updateCardContent,
     changeVotingStatus,
+    upvoteCard,
   } = useBoardActions(boardName, username, columns, setColumns);
   const [ votingEnabled, setVotingEnabled ] = useState<boolean>(false);
 
@@ -127,6 +128,7 @@ export default function Room({ boardName, username }: RoomProps) {
                 addCard={addCard}
                 deleteCard={deleteCard}
                 updateCardContent={updateCardContent}
+                upvoteCard={upvoteCard}
                 currentUser={username}
               />
             ))}

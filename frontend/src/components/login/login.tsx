@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect, useCallback } from 'react';
 import { socket } from '@/app/socket';
 
@@ -45,6 +43,30 @@ export default function Login({ username, boardName, setUsername, setBoardName, 
     };
   }, []);
 
+  const loadExistingBoard = () => {
+    const fileInput = document.getElementById('boardFile') as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const board = JSON.parse(e.target?.result as string);
+        if (username && board.name && board.columns) {
+          setBoardName(board.name);
+          // todo: payload has to be updated to include all the necessary data for the board
+          socket.emit('createBoard', { ownedBy: username, name: board.name });
+          setLoggedIn(true);
+        } else {
+          console.warn('Invalid board file or username missing.');
+          setErrors(['Invalid board file or username missing.']);
+        }
+      };
+      reader.readAsText(file);
+    } else {
+      console.warn('No file selected.');
+      setErrors(['No file selected.']);
+    }
+  };
+
   return (
     <div className="flex items-start h-screen">
       <div className="w-96 p-4 rounded-lg shadow-lg">
@@ -87,6 +109,26 @@ export default function Login({ username, boardName, setUsername, setBoardName, 
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
+          <span className={'flex justify-center text-gray-500 text-center mt-2'}>or</span>
+          <label htmlFor="boardFile" className="block text-sm font-medium text-gray-500">
+            Upload a board file
+          </label>
+          <input
+            type="file"
+            id="boardFile"
+            name="boardFile"
+            className="mt-1 block w-full px-3 py-2 border bg-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+          <input
+            type="button"
+            value="Load board"
+            className="w-full mt-2 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
+            onClick={loadExistingBoard}
+          />
+          {/* Small disclaimer stating that loading a board is currently in early development */}
+          <div className="flex justify-center text-gray-500 text-sm mt-2 text-center">
+            <p>⚠️ Loading a board is currently in early development and might not work as expected.</p>
+          </div>
         </form>
       </div>
     </div>

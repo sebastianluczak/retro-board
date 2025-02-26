@@ -251,4 +251,26 @@ export class BoardsGateway implements OnGatewayDisconnect {
     });
     this.sendUpdatedBoardsToClients(data.boardName);
   }
+
+  @SubscribeMessage('upvoteCard')
+  handleUpvoteCard(
+    @MessageBody()
+    data: {
+      boardName: string;
+      cardId: string;
+    },
+  ) {
+    this.logger.log(`Upvoting card ${data.cardId} in ${data.boardName}`);
+    const board = this.boardsService.findByName(data.boardName);
+
+    for (const column of board.columns) {
+      for (const card of column.cards) {
+        if (card.id === data.cardId) {
+          card.votes++;
+          this.sendUpdatedBoardsToClients(data.boardName);
+          return;
+        }
+      }
+    }
+  }
 }
