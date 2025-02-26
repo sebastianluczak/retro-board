@@ -20,6 +20,7 @@ Supported User Actions:
 - [x] moving cards between columns (drop card on "New card" button)
 - [x] changing contents of a card to be broadcast to other users immediately
 - [x] image support in cards, especially for memes and gifs
+- [x] votes on cards
 - [x] ownership of cards, to not be able to modify other's cards
 - [x] customizing columns in boards, i.e. add, delete, change name of column
 - [x] ownership of boards, with additional features for owners
@@ -42,7 +43,6 @@ IMPORTANT: Do not use those instances as real boards for your teams. Data is not
 NOTE: Some features may or may not be added based on my leniency.
 
 - [ ] blur/de-blur cards for owners
-- [ ] votes on cards
 - [ ] add minimal amount of tests
 - [ ] persisting data of boards in a database instead of memory
 - [ ] better architecture of FE and BE
