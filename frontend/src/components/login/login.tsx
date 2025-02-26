@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { socket } from "@/app/socket";
+import { useState, useEffect, useCallback } from 'react';
+import { socket } from '@/app/socket';
 
 type LoginProps = {
   username: string;
@@ -18,20 +18,22 @@ export default function Login({ username, boardName, setUsername, setBoardName, 
 
   const loginToServer = useCallback(() => {
     if (username.length < 4 || boardName.length < 4) {
-      console.warn("Username and board name must be at least 4 characters.");
-      setErrors(["Username and board name must be at least 4 characters."]);
+      console.warn('Username and board name must be at least 4 characters.');
+      setErrors(['Username and board name must be at least 4 characters.']);
+
       return;
     }
     // username has to be a valid email address
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username)) {
-      console.warn("Username must be a valid email address.");
-      setErrors(["Username must be a valid email address."]);
+      console.warn('Username must be a valid email address.');
+      setErrors(['Username must be a valid email address.']);
+
       return;
     }
 
     setLoading(true);
 
-    socket.emit("createBoard", { ownedBy: username, name: boardName });
+    socket.emit('createBoard', { ownedBy: username, name: boardName });
 
     setLoading(false);
     setLoggedIn(true);
@@ -39,7 +41,7 @@ export default function Login({ username, boardName, setUsername, setBoardName, 
 
   useEffect(() => {
     return () => {
-      socket.off("boardExists");
+      socket.off('boardExists');
     };
   }, []);
 
@@ -83,7 +85,7 @@ export default function Login({ username, boardName, setUsername, setBoardName, 
             onClick={loginToServer}
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>

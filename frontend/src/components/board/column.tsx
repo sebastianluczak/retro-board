@@ -1,7 +1,7 @@
-import { ConnectDropTarget, useDrop } from "react-dnd";
-import { CardComponent } from "@/components/board/card";
-import { Ref } from "react";
-import { X } from "lucide-react";
+import { ConnectDropTarget, useDrop } from 'react-dnd';
+import { CardComponent } from '@/components/board/card';
+import { Ref } from 'react';
+import { X } from 'lucide-react';
 
 export type Card = {
   id: number;
@@ -12,7 +12,7 @@ export type Card = {
 };
 
 export const ItemType = {
-  CARD: "card",
+  CARD: 'card',
 };
 
 type ColumnProps = {
@@ -30,8 +30,22 @@ type ColumnProps = {
   updateCardContent: (columnIndex: number, cardIndex: number, content: string) => void;
 };
 
-
-export default function Column({ name, boardName, currentUser, cards, columnIndex, votingEnabled, changeColumnName, removeColumn, moveCard, addCard, deleteCard, updateCardContent }: ColumnProps){
+export default function Column(
+  {
+    name,
+    boardName,
+    currentUser,
+    cards,
+    columnIndex,
+    votingEnabled,
+    changeColumnName,
+    removeColumn,
+    moveCard,
+    addCard,
+    deleteCard,
+    updateCardContent,
+  }: ColumnProps,
+){
   const [, drop] = useDrop({
     accept: ItemType.CARD,
     drop: (draggedItem: { index: number; columnIndex: number }) => {
@@ -46,7 +60,7 @@ export default function Column({ name, boardName, currentUser, cards, columnInde
       className="flex flex-col gap-2 bg-gray-800 p-4 rounded-lg shadow-md"
       ref={drop as unknown as Ref<HTMLDivElement>}
     >
-      <div className={"flex justify-start items-center"}>
+      <div className={'flex justify-start items-center'}>
         <button
           className="text-gray-400 hover:text-red-500 transition"
           onClick={() => removeColumn(columnIndex)}
@@ -54,7 +68,7 @@ export default function Column({ name, boardName, currentUser, cards, columnInde
           <X size={20} />
         </button>
         <input
-          type={"text"}
+          type={'text'}
           value={name}
           className="p-2 bg-gray-800 text-white rounded hover:bg-gray-700 font-bold transition"
           onChange={(r) => changeColumnName(columnIndex, r.target.value)}

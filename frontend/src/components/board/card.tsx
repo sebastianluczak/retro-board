@@ -1,10 +1,10 @@
-import { forwardRef, useImperativeHandle, useRef, useEffect } from "react";
-import { useDrag } from "react-dnd";
-import { Card, ItemType } from "@/components/board/column";
-import Image from "next/image";
-import { socket } from "@/app/socket";
-import { X, ThumbsUp } from "lucide-react";
-import toast from "react-simple-toasts";
+import { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
+import { useDrag } from 'react-dnd';
+import { Card, ItemType } from '@/components/board/column';
+import Image from 'next/image';
+import { socket } from '@/app/socket';
+import { X, ThumbsUp } from 'lucide-react';
+import toast from 'react-simple-toasts';
 
 type CardProps = {
   card: Card;
@@ -44,10 +44,11 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
       if (!file) {
         return;
       }
-
+      
       if (file.size > 512 * 1024) {
-        toast("File is too large! Max size is 0.5 MB.");
-        e.target.value = "";
+        toast('File is too large! Max size is 0.5 MB.');
+        e.target.value = '';
+
         return;
       }
 
@@ -55,7 +56,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
       reader.onload = () => {
         const base64String = reader.result as string;
         updateCardContent(columnIndex, index, card.content, base64String);
-        socket.emit("updateCardContent", {
+        socket.emit('updateCardContent', {
           boardName: boardName,
           columnIndex: columnIndex,
           cardIndex: index,
@@ -68,7 +69,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
 
     useEffect(() => {
       if (textareaRef.current) {
-        textareaRef.current.style.height = "auto";
+        textareaRef.current.style.height = 'auto';
         textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
       }
     }, [card.content, card.image]);
@@ -76,8 +77,8 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={elementRef}
-        className={`relative p-4 bg-gray-700 text-white rounded shadow ${isDragging ? "opacity-50" : "opacity-100"}`}
-        style={{ cursor: disabled ? "not-allowed" : "grab" }}
+        className={`relative p-4 bg-gray-700 text-white rounded shadow ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+        style={{ cursor: disabled ? 'not-allowed' : 'grab' }}
       >
         {!disabled && (
           <button
@@ -117,7 +118,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
         {votingEnabled && (
           <div className="mt-4 text-sm flex items-center gap-1 justify-end">
             <button
-              onClick={() => toast(`Upvote of cards is not implemented.`)}
+              onClick={() => toast('Upvote of cards is not implemented.')}
               className="flex items-center gap-1 text-green-200"
             >
               <ThumbsUp/> {card.votes}
@@ -126,5 +127,5 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
         )}
       </div>
     );
-  }
+  },
 );
