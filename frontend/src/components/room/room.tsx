@@ -121,12 +121,6 @@ export default function Room({ boardName, username }: RoomProps) {
               />
               <input
                 type="button"
-                value={'Blur cards'}
-                className="bg-red-950 font-bold text-white p-3 m-1 rounded shadow shadow-red-700"
-                onClick={() => toast('Blurring cards, this is not yet implemented, stay tuned...')}
-              />
-              <input
-                type="button"
                 value="Start timer"
                 className="bg-red-950 font-bold text-white p-3 m-1 rounded shadow shadow-red-700"
                 onClick={() => toast('Starting timer, this is not yet implemented, stay tuned...')}
