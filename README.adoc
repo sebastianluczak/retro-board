@@ -81,9 +81,18 @@ $ devenv shell
 
 === Tests
 
-Nothing here yet.
+There are some basic tests for both frontend and backend.
 
-IMPORTANT: Never write code without tests for your domain logic. You're asking for trouble.
+[shell,terminal]
+----
+$ devenv shell
+$ cd frontend && npm run test
+$ cd backend && npm run test
+----
+
+=== Documentation
+
+Additional documentation can be found in `docs` directory.
 
 .Developer's Journey
 [%collapsible]
