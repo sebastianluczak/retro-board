@@ -17,7 +17,7 @@ Supported User Actions:
 - [x] creation of a board with username
 - [x] adding new cards
 - [x] deleting cards that belong to the user
-- [x] moving cards between columns (drop card on "New card" button)
+- [x] moving cards between columns
 - [x] changing contents of a card to be broadcast to other users immediately
 - [x] image support in cards, especially for memes and gifs
 - [x] votes on cards
@@ -43,8 +43,7 @@ IMPORTANT: Do not use those instances as real boards for your teams. Data is not
 
 NOTE: Some features may or may not be added based on my leniency.
 
-- [ ] add minimal amount of tests
-- [ ] persisting data of boards in a database instead of memory
+- [ ] persisting data of boards in a database instead of memory (or in local storage)
 - [ ] better architecture of FE and BE
 - [ ] server-based timer - synchronized across all clients
 - [ ] proper styling with mobile-first approach
