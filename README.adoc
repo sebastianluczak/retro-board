@@ -43,6 +43,7 @@ IMPORTANT: Do not use those instances as real boards for your teams. Data is not
 
 NOTE: Some features may or may not be added based on my leniency.
 
+- [ ] figure out way out of Next.js as update to 15.2 brings some breaking changes, which is a no-no for me
 - [ ] copy the link to existing board to share with others, login only required for those links (i.e. React Router)
 - [ ] persisting data of boards in a database instead of memory (or in local storage)
 - [ ] better architecture of FE and BE
