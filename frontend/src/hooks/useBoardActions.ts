@@ -31,7 +31,7 @@ export function useBoardActions(
   };
 
   const createNewColumn = (columnName: string) => {
-    setColumns([...columns, { name: columnName, cards: [], voting: false }]);
+    setColumns([...columns, { name: columnName, cards: [], voting: false, blurry: false }]);
     socket.emit('createColumn', { boardName, columnName });
   };
 
@@ -69,6 +69,12 @@ export function useBoardActions(
     socket.emit('upvoteCard', { boardName, cardId });
   };
 
+  const changeBlurStatus = (state: boolean) => {
+    const newColumns = [...columns];
+    newColumns.forEach((column) => (column.blurry = state));
+    socket.emit('changeBlurStatus', { boardName, state });
+  };
+
   return {
     addCard,
     deleteCard,
@@ -79,5 +85,6 @@ export function useBoardActions(
     updateCardContent,
     changeVotingStatus,
     upvoteCard,
+    changeBlurStatus,
   };
 }

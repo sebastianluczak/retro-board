@@ -20,6 +20,7 @@ type RoomProps = {
 export type ColumnRow = {
   name: string;
   voting: boolean;
+  blurry: boolean;
   cards: Card[];
 };
 
@@ -36,8 +37,10 @@ export default function Room({ boardName, username }: RoomProps) {
     updateCardContent,
     changeVotingStatus,
     upvoteCard,
+    changeBlurStatus,
   } = useBoardActions(boardName, username, columns, setColumns);
   const [ votingEnabled, setVotingEnabled ] = useState<boolean>(false);
+  const [ blurEnabled, setBlurEnabled ] = useState<boolean>(false);
 
   const isAdminOfBoard = () => {
     const adminUserOfBoard = participants.filter((user) => user.isAdminOfBoard).pop();
@@ -52,6 +55,14 @@ export default function Room({ boardName, username }: RoomProps) {
       toast('Voting disabled!', { duration: 3000, maxVisibleToasts: 1 });
     }
   }, [votingEnabled]);
+
+  useEffect(() => {
+    if (blurEnabled) {
+      toast('Blurring enabled!', { duration: 3000, maxVisibleToasts: 1 });
+    } else {
+      toast('Blurring disabled!', { duration: 3000, maxVisibleToasts: 1 });
+    }
+  }, [blurEnabled]);
 
   const snapshotBoard = () => {
     const board = {
@@ -101,6 +112,15 @@ export default function Room({ boardName, username }: RoomProps) {
               />
               <input
                 type="button"
+                value={ blurEnabled ? 'Disable blur' : 'Enable blur' }
+                className={`font-bold text-white p-3 m-1 rounded shadow ${blurEnabled ? 'bg-red-950  shadow-red-700' : 'bg-green-950 shadow-green-700'}`}
+                onClick={() => {
+                  setBlurEnabled(!blurEnabled);
+                  changeBlurStatus(!blurEnabled);
+                }}
+              />
+              <input
+                type="button"
                 value={'Blur cards'}
                 className="bg-red-950 font-bold text-white p-3 m-1 rounded shadow shadow-red-700"
                 onClick={() => toast('Blurring cards, this is not yet implemented, stay tuned...')}
@@ -122,6 +142,7 @@ export default function Room({ boardName, username }: RoomProps) {
                 columnIndex={columnIndex}
                 boardName={boardName}
                 votingEnabled={column.voting}
+                blurry={ column.blurry }
                 changeColumnName={changeColumnName}
                 removeColumn={removeColumn}
                 moveCard={moveCard}

@@ -13,6 +13,7 @@ type CardProps = {
   columnIndex: number;
   disabled: boolean;
   votingEnabled: boolean;
+  blurred: boolean;
   upvoteCard: (cardId: number) => void;
   deleteCard: (cardId: number, columnIndex: number) => void;
   updateCardContent: (columnIndex: number, cardIndex: number, content: string, imageUrl?: string) => void;
@@ -20,7 +21,7 @@ type CardProps = {
 
 // eslint-disable-next-line react/display-name
 export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
-  ({ card, boardName, disabled, votingEnabled, index, columnIndex, deleteCard, updateCardContent, upvoteCard }, ref) => {
+  ({ card, boardName, disabled, votingEnabled, index, columnIndex, deleteCard, updateCardContent, upvoteCard, blurred }, ref) => {
     const [{ isDragging }, drag] = useDrag({
       type: ItemType.CARD,
       item: { index, columnIndex },
@@ -102,7 +103,7 @@ export const CardComponent = forwardRef<HTMLDivElement, CardProps>(
         )}
         <textarea
           ref={textareaRef}
-          className="flex w-full bg-gray-700 text-white border-none resize-none overflow-hidden justify-center text-justify"
+          className={`flex w-full bg-gray-700 text-white border-none resize-none overflow-hidden justify-center text-justify ${blurred ? 'blur-md' : ''}`}
           value={card.content}
           onChange={handleContentChange}
           disabled={disabled}

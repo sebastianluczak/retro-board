@@ -232,6 +232,7 @@ export class BoardsGateway implements OnGatewayDisconnect {
       name: data.columnName,
       cards: [],
       voting: false,
+      blurry: false,
     });
     this.sendUpdatedBoardsToClients(data.boardName, { exclude: client });
   }
@@ -272,5 +273,21 @@ export class BoardsGateway implements OnGatewayDisconnect {
         }
       }
     }
+  }
+
+  @SubscribeMessage('changeBlurStatus')
+  handleChangeBlurStatus(
+    @MessageBody()
+    data: {
+      boardName: string;
+      state: boolean;
+    },
+  ) {
+    this.logger.log(`Blurring for ${data.boardName} is now ${data.state}`);
+    const board = this.boardsService.findByName(data.boardName);
+    board.columns.forEach((column) => {
+      column.blurry = data.state;
+    });
+    this.sendUpdatedBoardsToClients(data.boardName);
   }
 }

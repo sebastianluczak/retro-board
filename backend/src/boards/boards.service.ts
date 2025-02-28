@@ -13,7 +13,8 @@ export type BoardData = {
 
 type ColumnData = {
   name: string; // Column name
-  voting: boolean; // Indicates if columns has voting capabilities
+  voting: boolean; // Indicates if column's cards has voting capabilities
+  blurry: boolean; // Indicates if column's cards are blurred
   cards: CardData[]; // Cards in the column
 };
 
@@ -62,11 +63,13 @@ export class BoardsService {
             },
           ],
           voting: false,
+          blurry: false,
         },
         {
           name: 'Column 2',
           cards: [],
           voting: false,
+          blurry: false,
         },
       ],
       participants: [

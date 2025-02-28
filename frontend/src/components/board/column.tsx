@@ -22,6 +22,7 @@ type ColumnProps = {
   cards: Card[],
   columnIndex: number;
   votingEnabled: boolean;
+  blurry: boolean;
   upvoteCard: (cardId: number) => void;
   changeColumnName: (columnIndex: number, name: string) => void;
   removeColumn: (columnIndex: number) => void;
@@ -38,6 +39,7 @@ export default function Column(
     currentUser,
     cards,
     columnIndex,
+    blurry,
     votingEnabled,
     changeColumnName,
     removeColumn,
@@ -95,6 +97,7 @@ export default function Column(
           deleteCard={deleteCard}
           boardName={boardName}
           votingEnabled={votingEnabled}
+          blurred={ currentUser !== card.ownedBy && blurry }
           disabled={card.ownedBy !== currentUser}
         />
       ))}
