@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,11 +17,6 @@
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-}
-
-input {
   color: var(--foreground);
   background: var(--background);
 }
