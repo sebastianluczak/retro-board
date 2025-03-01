@@ -25,6 +25,7 @@ Supported User Actions:
 - [x] ownership of cards, to not be able to modify other's cards
 - [x] customizing columns in boards, i.e. add, delete, change name of column
 - [x] ownership of boards, with additional features for owners
+- [x] server-based timer - synchronized across all clients
 - [x] disconnecting users from boards
 - [x] ability to save data of a board to a file
 
@@ -46,7 +47,6 @@ NOTE: Some features may or may not be added based on my leniency.
 - [ ] copy the link to existing board to share with others, login only required for those links (i.e. React Router)
 - [ ] persisting data of boards in a database instead of memory (or in local storage)
 - [ ] better architecture of FE and BE
-- [ ] server-based timer - synchronized across all clients
 - [ ] proper styling with mobile-first approach
 
 == Technology stack

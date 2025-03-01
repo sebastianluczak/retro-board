@@ -38,6 +38,7 @@ export default function Room({ boardName, username }: RoomProps) {
     changeVotingStatus,
     upvoteCard,
     changeBlurStatus,
+    startTimer,
   } = useBoardActions(boardName, username, columns, setColumns);
   const [ votingEnabled, setVotingEnabled ] = useState<boolean>(false);
   const [ blurEnabled, setBlurEnabled ] = useState<boolean>(false);
@@ -70,7 +71,6 @@ export default function Room({ boardName, username }: RoomProps) {
       columns: columns,
     };
 
-    // Now we want to download the board as a JSON file
     const blob = new Blob([JSON.stringify(board)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -123,7 +123,7 @@ export default function Room({ boardName, username }: RoomProps) {
                 type="button"
                 value="Start timer"
                 className="bg-red-950 font-bold text-white p-3 m-1 rounded shadow shadow-red-700"
-                onClick={() => toast('Starting timer, this is not yet implemented, stay tuned...')}
+                onClick={() => startTimer()}
               />
             </>
           )}

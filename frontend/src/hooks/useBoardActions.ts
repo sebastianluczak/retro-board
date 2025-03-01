@@ -75,6 +75,11 @@ export function useBoardActions(
     socket.emit('changeBlurStatus', { boardName, state });
   };
 
+  const startTimer = () => {
+    console.log('start timer');
+    socket.emit('startTimerOnBoard', { boardName });
+  };
+
   return {
     addCard,
     deleteCard,
@@ -86,5 +91,6 @@ export function useBoardActions(
     changeVotingStatus,
     upvoteCard,
     changeBlurStatus,
+    startTimer,
   };
 }

@@ -19,6 +19,9 @@ export default function Home() {
   // Board name
   const [boardName, setBoardName] = useState('');
 
+  // timer
+  const [timer, setTimer] = useState<{ secondsLeft: number, isRunning: boolean} | null>(null);
+
   useEffect(() => {
     if (socket.connected) {
       onConnect();
@@ -42,8 +45,38 @@ export default function Home() {
       setBoardName('');
     }
 
+    function setNewTimer(data: { secondsLeft: number, boardName: string }) {
+      console.log('New Timer data:', data);
+      // poll for new timer data every second
+      const interval = setInterval(() => {
+        console.log('sending getTimer');
+        socket.emit('getTimer', { boardName: data.boardName });
+      }, 1000);
+      if (timer) {
+        setTimer({ ...timer, secondsLeft: data.secondsLeft });
+      } else {
+        setTimer({ secondsLeft: data.secondsLeft, isRunning: true });
+      }
+
+      setTimeout(() => {
+        clearInterval(interval);
+      }, data.secondsLeft * 1000);
+    }
+
+    function updateTimer(data: { secondsLeft: number, boardName: string }) {
+      console.log('Updated Timer data:', data);
+
+      if (timer) {
+        setTimer({ ...timer, secondsLeft: data.secondsLeft });
+      } else {
+        setTimer({ secondsLeft: data.secondsLeft, isRunning: true });
+      }
+    }
+
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
+    socket.on('timer', setNewTimer);
+    socket.on('newTimer', updateTimer);
 
     return () => {
       socket.off('connect', onConnect);
@@ -56,6 +89,7 @@ export default function Home() {
       <TopBar
         username={username}
         loggedIn={loggedIn}
+        timer={timer}
       />
       <div className="flex items-center justify-center mt-20">
         <main>
